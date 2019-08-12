@@ -1,0 +1,6 @@
+OpenAI
+https://openai.com/blog/spinning-up-in-deep-rl/
+https://spinningup.openai.com/en/latest/
+
+Keras
+https://keras.io/models/model/

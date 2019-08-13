@@ -1,9 +1,11 @@
 const { DenseFactory } = require("./dense.js");
 const { ReLUFactory } = require("./relu.js");
+const { SigmoidFactory } = require("./sigmoid.js");
 
 const layerFactories = [
     DenseFactory,
-    ReLUFactory
+    ReLUFactory,
+    SigmoidFactory
 ];
 
 const LayerFactory = function(layerData) {

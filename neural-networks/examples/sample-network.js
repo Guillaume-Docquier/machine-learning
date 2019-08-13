@@ -1,15 +1,19 @@
-const { Sequential, Dense, ReLU } = require("../index.js");
+const { Sequential, Dense, ReLU, Sigmoid } = require("../index.js");
 
 console.log("Model from scratch...");
 const model = Sequential()
     .add(Dense(5, 3))
     .add(ReLU())
-    .add(Dense(3, 1));
+    .add(Dense(3, 3))
+    .add(Sigmoid());
 
-model.print();
+const randomData = [Math.random(), Math.random(), Math.random(), Math.random(), Math.random()];
+console.log(model.feedForward(randomData));
+//model.print();
 model.save("model.ai");
 
 console.log("\nModel from file...");
 const reloadedModel = Sequential();
 reloadedModel.load("model.ai");
-reloadedModel.print();
+console.log(reloadedModel.feedForward(randomData));
+//reloadedModel.print();

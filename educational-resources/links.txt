@@ -7,3 +7,12 @@ https://keras.io/models/model/
 
 Weight initialization
 https://machinelearningmastery.com/why-initialize-a-neural-network-with-random-weights/
+
+Activation functions
+https://en.wikipedia.org/wiki/Activation_function
+
+Implementing backpropagation
+https://machinelearningmastery.com/implement-backpropagation-algorithm-scratch-python/
+
+Implementing fully connected networks
+https://egghead.io/lessons/python-course-introduction-fully-connected-neural-networks-with-keras

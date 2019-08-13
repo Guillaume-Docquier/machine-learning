@@ -7,42 +7,48 @@ const DenseFactory = function(layerData) {
         return false;
     }
 
-    return new Dense(layerData.inputSize, layerData.outputSize, layerData.weights);
+    return new Dense(layerData.inputSize, layerData.outputSize, layerData.weights, false);
 }
 
 class Dense {
-    constructor(inputSize, outputSize, weights) {
+    constructor(inputSize, outputSize, weights, addBias = true) {
         this.type = LAYER_TYPE;
-        this.inputSize = inputSize;
+        this.inputSize = inputSize + (addBias ? 1 : 0);
         this.outputSize = outputSize;
 
         if (weights) {
-            if (weights.length !== inputSize || weights[0].length !== outputSize) {
-                console.log(`Incompatible size for Dense layer with weights initialization. Expected ${inputSize}x${outputSize}, actual: ${weights.length}x${weights[0].length}`);
+            if (weights.length !== this.inputSize || weights[0].length !== this.outputSize) {
+                console.log(`Incompatible size for Dense layer with weights initialization. Expected ${this.inputSize}x${this.outputSize}, actual: ${weights.length}x${weights[0].length}`);
             }
 
             this.weights = weights
         }
         else {
-            this.weights = utils.randomMatrixInitializer(inputSize, outputSize);
+            this.weights = utils.randomMatrixInitializer(this.inputSize, this.outputSize);
         }
     }
 
     feedForward(input) {
-        if (input.length !== this.inputSize) {
-            console.log(`Incompatible input for feedforward operation. Expected ${this.inputSize}, actual: ${input.length}`);
-            return utils.filledArray(this.outputSize, 0);
+        const biasedInput = this.addBias(input);
+
+        if (biasedInput.length !== this.inputSize) {
+            console.log(`Incompatible input for feedforward operation. Expected ${this.inputSize}, actual: ${biasedInput.length}`);
+            return utils.filledArray(this.outputSize, () => 0);
         }
 
         // Y = E.i [ Ej [ x.i * w.ij ] ] in a non-matrix form
-        const output = utils.filledArray(this.outputSize, 0);
-        for(let i = 0; i < this.inputSize.length; i++) {
+        const output = utils.filledArray(this.outputSize, () => 0);
+        for(let i = 0; i < this.inputSize; i++) {
             for(let j = 0; j < this.outputSize; j++) {
-                output[j] += input[i] * this.weights[i][j]
+                output[j] += biasedInput[i] * this.weights[i][j]
             }
         }
         
         return output;
+    }
+
+    addBias(input) {
+        return [...input, 1.0];
     }
 }
 

@@ -14,7 +14,7 @@ class Sigmoid {
     }
 
     feedForward(input) {
-        return input.map(value => 1 / (1 + Math.pow(Math.E, -value)));
+        return input.map(value => 1 / (1 + Math.exp(-value)));
     }
 }
 

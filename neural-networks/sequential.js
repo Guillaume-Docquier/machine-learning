@@ -8,6 +8,8 @@ class Sequential {
 
     add(layer) {
         this.layers.push(layer);
+
+        return this;
     }
 
     feedForward(input) {

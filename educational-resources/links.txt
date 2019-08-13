@@ -4,3 +4,6 @@ https://spinningup.openai.com/en/latest/
 
 Keras
 https://keras.io/models/model/
+
+Weight initialization
+https://machinelearningmastery.com/why-initialize-a-neural-network-with-random-weights/

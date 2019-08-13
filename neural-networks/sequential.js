@@ -1,4 +1,5 @@
-const fs = require("fs");
+const utils = require("./utils.js");
+const { LayerFactory } = require("./layer-factory.js")
 
 class Sequential {
     constructor() {
@@ -9,24 +10,25 @@ class Sequential {
         this.layers.push(layer);
     }
 
+    feedForward(input) {
+        return this.layers.reduce((nextInput, layer) => layer.feedForward(nextInput), input);
+    }
+
     print() {
-        this.layers.forEach(console.log);
+        this.layers.forEach(layer => console.log(layer));
     }
 
     save(filePath) {
-        fs.writeFileSync(filePath, JSON.stringify(this.layers), handleWriteError);
+        utils.writeFileSync(filePath, JSON.stringify(this.layers));
     }
 
     load(filePath) {
-        const data = fs.readFileSync(filePath, 'utf8');
-        this.layers = JSON.parse(data);
+        const layerObjs = JSON.parse(utils.readFileSync(filePath));
+
+        this.layers = layerObjs.map(layerObj => LayerFactory(layerObj));
     }
 };
 
-function handleWriteError(error) {
-    if (error) {
-        throw error;
-    }
+module.exports = {
+    Sequential: args => new Sequential(args)
 }
-
-module.exports = args => new Sequential(args);

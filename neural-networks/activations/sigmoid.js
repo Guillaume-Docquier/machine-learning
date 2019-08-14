@@ -1,7 +1,7 @@
-const LAYER_TYPE = "Sigmoid"
+const ACTIVATION_TYPE = "Sigmoid";
 
-const SigmoidFactory = function(layerData) {
-    if (layerData.type !== LAYER_TYPE) {
+const SigmoidFactory = function(activationData) {
+    if (activationData.type !== ACTIVATION_TYPE) {
         return false;
     }
 
@@ -10,10 +10,10 @@ const SigmoidFactory = function(layerData) {
 
 class Sigmoid {
     constructor() {
-        this.type = LAYER_TYPE;
+        this.type = ACTIVATION_TYPE;
     }
 
-    feedForward(input) {
+    activate(input) {
         return input.map(value => 1 / (1 + Math.exp(-value)));
     }
 }

@@ -1,7 +1,7 @@
-const LAYER_TYPE = "ReLU"
+const ACTIVATION_TYPE = "ReLU";
 
-const ReLUFactory = function(layerData) {
-    if (layerData.type !== LAYER_TYPE) {
+const ReLUFactory = function(activationData) {
+    if (activationData.type !== ACTIVATION_TYPE) {
         return false;
     }
 
@@ -10,10 +10,10 @@ const ReLUFactory = function(layerData) {
 
 class ReLU {
     constructor() {
-        this.type = LAYER_TYPE;
+        this.type = ACTIVATION_TYPE;
     }
 
-    feedForward(input) {
+    activate(input) {
         return input.map(value => Math.max(0, value));
     }
 }

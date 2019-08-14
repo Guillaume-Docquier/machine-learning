@@ -1,4 +1,5 @@
-const utils = require("./utils.js");
+const utils = require("../utils.js");
+const { ActivationFactory } = require("../activations/activation-factory");
 
 const LAYER_TYPE = "Dense"
 
@@ -7,14 +8,17 @@ const DenseFactory = function(layerData) {
         return false;
     }
 
-    return new Dense(layerData.inputSize, layerData.outputSize, layerData.weights, false);
+    const activation = ActivationFactory(layerData.activation);
+
+    return new Dense(layerData.inputSize, layerData.outputSize, activation, false, layerData.weights);
 }
 
 class Dense {
-    constructor(inputSize, outputSize, weights, addBias = true) {
+    constructor(inputSize, outputSize, activation, addBias = true, weights = null) {
         this.type = LAYER_TYPE;
         this.inputSize = inputSize + (addBias ? 1 : 0);
         this.outputSize = outputSize;
+        this.activation = activation;
 
         if (weights) {
             if (weights.length !== this.inputSize || weights[0].length !== this.outputSize) {
@@ -44,7 +48,7 @@ class Dense {
             }
         }
         
-        return output;
+        return this.activation.activate(output);
     }
 
     addBias(input) {
@@ -53,6 +57,6 @@ class Dense {
 }
 
 module.exports = {
-    Dense: (inputSize, outputSize) => new Dense(inputSize, outputSize),
+    Dense: (...args) => new Dense(...args),
     DenseFactory,
 }

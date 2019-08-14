@@ -1,7 +1,7 @@
 const utils = require("./utils.js");
-const { LayerFactory } = require("./layer-factory.js")
+const { LayerFactory } = require("./layers/layer-factory.js")
 
-class Sequential {
+class NeuralNetwork {
     constructor() {
         this.layers = [];
     }
@@ -32,5 +32,5 @@ class Sequential {
 };
 
 module.exports = {
-    Sequential: args => new Sequential(args)
+    NeuralNetwork: args => new NeuralNetwork(args)
 }

@@ -33,22 +33,47 @@ class Dense {
     }
 
     feedForward(input) {
+        // w = [w, b]
         const biasedInput = this.addBias(input);
 
-        if (biasedInput.length !== this.inputSize) {
+        if (this.inputSize !== biasedInput.length) {
             console.log(`Incompatible input for feedforward operation. Expected ${this.inputSize}, actual: ${biasedInput.length}`);
             return utils.filledArray(this.outputSize, () => 0);
         }
 
-        // Y = E.i [ Ej [ x.i * w.ij ] ] in a non-matrix form
+        // z = w.i
         const output = utils.filledArray(this.outputSize, () => 0);
         for(let i = 0; i < this.inputSize; i++) {
             for(let j = 0; j < this.outputSize; j++) {
-                output[j] += biasedInput[i] * this.weights[i][j]
+                output[j] += this.weights[i][j] * biasedInput[i]
             }
         }
         
+        // a = g(z)
         return this.activation.activate(output);
+    }
+
+    backPropagate(errors) {
+        const derivatives = this.activation.transfer();
+        this.errors = errors.map((error, j) => error * derivatives[j]);
+
+        const nextErrors = utils.filledArray(this.inputSize, () => 0);
+        for (let i = 0; i < this.inputSize; i++) {
+            for (let j = 0; j < this.outputSize; j++) {
+                nextErrors[i] += this.weights[i][j] * this.errors[j];
+            }
+        }
+
+        return nextErrors;
+    }
+
+    updateWeights(learningRate) {
+        // wij = wij - lr * errorij
+        for (let i = 0; i < this.inputSize; i++) {
+            for (let j = 0; j < this.outputSize; j++) {
+                this.weights[i][j] += learningRate * this.errors[j];
+            }
+        }
     }
 
     addBias(input) {

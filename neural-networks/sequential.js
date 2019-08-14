@@ -2,8 +2,10 @@ const utils = require("./utils.js");
 const { LayerFactory } = require("./layers/layer-factory.js")
 
 class Sequential {
-    constructor() {
+    constructor(learningRate = 0.01) {
         this.layers = [];
+        this.output = null;
+        this.learningRate = learningRate;
     }
 
     add(layer) {
@@ -13,7 +15,34 @@ class Sequential {
     }
 
     feedForward(input) {
-        return this.layers.reduce((nextInput, layer) => layer.feedForward(nextInput), input);
+        this.output = this.layers.reduce((nextInput, layer) => layer.feedForward(nextInput), input);
+
+        return this.output;
+    }
+
+    predict(input) {
+        const output = this.feedForward(input);
+
+        let max = 0;
+        let predictedClass = 0;
+        output.forEach((value, i) => {
+            if (value > max) {
+                max = value;
+                predictedClass = i;
+            }
+        })
+
+        return predictedClass;
+    }
+
+    fit(expected) {
+        const outputErrors = this.output.map((output, i) => expected[i] - output);
+
+        // Backprop
+        this.layers.reduceRight((nextErrors, layer) => layer.backPropagate(nextErrors), outputErrors);
+
+        // Update
+        this.layers.forEach(layer => layer.updateWeights(this.learningRate));
     }
 
     print() {

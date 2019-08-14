@@ -11,10 +11,17 @@ const SigmoidFactory = function(activationData) {
 class Sigmoid {
     constructor() {
         this.type = ACTIVATION_TYPE;
+        this.output = null;
     }
 
     activate(input) {
-        return input.map(value => 1 / (1 + Math.exp(-value)));
+        this.output = input.map(value => 1 / (1 + Math.exp(-value)));
+
+        return this.output;
+    }
+
+    transfer() {
+        return this.output.map(output => output * (1 - output));
     }
 }
 

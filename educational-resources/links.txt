@@ -13,6 +13,10 @@ https://en.wikipedia.org/wiki/Activation_function
 
 Implementing backpropagation
 https://machinelearningmastery.com/implement-backpropagation-algorithm-scratch-python/
+https://medium.com/binaryandmore/beginners-guide-to-deriving-and-implementing-backpropagation-e3c1a5a1e536
 
 Implementing fully connected networks
 https://egghead.io/lessons/python-course-introduction-fully-connected-neural-networks-with-keras
+
+3BLUE1BROWN SERIES  S3 • E1 - E4
+https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi

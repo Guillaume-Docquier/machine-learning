@@ -24,6 +24,15 @@ function randomMatrixInitializer(sizeX, sizeY) {
     return filledArray(sizeX, randomArrayGenerator);
 }
 
+function MSE(actual, expected) {
+    const squaredError = 0;
+    for(let i = 0; i < actual.length; i++) {
+        squaredError += Math.pow(actual[i] - expected[i], 2);
+    }
+
+    return squaredError / actual.length;
+}
+
 module.exports = {
     readFileSync,
     writeFileSync,

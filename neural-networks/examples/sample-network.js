@@ -12,13 +12,13 @@ expectedOutput[expectedClass] = 1;
 
 console.log("Build a simple model and feed it some data");
 const model = Sequential()
-    .add(Dense(intputSize, hiddenLayerSize, ReLU()))
-    .add(Dense(hiddenLayerSize, hiddenLayerSize, ReLU()))
-    .add(Dense(hiddenLayerSize, hiddenLayerSize, ReLU()))
-    .add(Dense(hiddenLayerSize, hiddenLayerSize, ReLU()))
-    .add(Dense(hiddenLayerSize, hiddenLayerSize, Sigmoid()))
-    .add(Dense(hiddenLayerSize, hiddenLayerSize, Sigmoid()))
-    .add(Dense(hiddenLayerSize, outputSize, Sigmoid()));
+    .add(Dense(intputSize,            hiddenLayerSize,       ReLU()))
+    .add(Dense(hiddenLayerSize,       hiddenLayerSize,       ReLU()))
+    .add(Dense(hiddenLayerSize,       hiddenLayerSize - 100, ReLU()))
+    .add(Dense(hiddenLayerSize - 100, hiddenLayerSize,       ReLU()))
+    .add(Dense(hiddenLayerSize,       hiddenLayerSize - 200, Sigmoid()))
+    .add(Dense(hiddenLayerSize - 200, hiddenLayerSize,       Sigmoid()))
+    .add(Dense(hiddenLayerSize,       outputSize,            Sigmoid()));
 
 console.log(model.feedForward(randomData));
 //model.print();

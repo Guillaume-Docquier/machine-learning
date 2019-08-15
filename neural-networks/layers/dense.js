@@ -71,7 +71,7 @@ class Dense {
     updateWeights(learningRate) {
         // wij = wij - lr * errorj * inputi
         for (let i = 0; i < this.inputSize; i++) {
-            for (let j = 0; j < this.outputSize + 1; j++) {
+            for (let j = 0; j < this.outputSize; j++) {
                 this.weights[i][j] += learningRate * this.errors[j] * this.input[i];
             }
         }

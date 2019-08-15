@@ -8,8 +8,6 @@ const HIDDEN_LAYER_NB_NEURONS = 300;
 const MNIST_NB_CLASSES = 10;
 
 const { training, test } = mnist.set(8000, 2000);
-//console.log(utils.getClass(training[0].output));
-//printImage(training[0].input);
 
 const model = Sequential(0.1)
     .add(Dense(MNIST_NB_PIXELS,         HIDDEN_LAYER_NB_NEURONS, ReLU()))
@@ -36,13 +34,3 @@ for (let i = 0; i < test.length; i++) {
 
 console.log(`Success rate: ${correct} / ${test.length} (${correct / test.length * 100}%)`);
 model.save("mnist.ai");
-
-function printImage(pixels) {
-    for (let i = 0; i < MNIST_IMAGE_SIZE; i++) {
-        let row = "";
-        for (let j = 0; j < MNIST_IMAGE_SIZE; j++) {
-            row += pixels[i * MNIST_IMAGE_SIZE + j] ? "X" : " ";
-        }
-        console.log(row);
-    }
-}

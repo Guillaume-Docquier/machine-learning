@@ -19,7 +19,7 @@ function filledArray(size, fillGenerator) {
 }
 
 function randomMatrixInitializer(sizeX, sizeY) {
-    const randomNumberGenerator = () => Math.random();
+    const randomNumberGenerator = () => Math.random() / 100; // It seems big initial weights can mess backprop 
     const randomArrayGenerator = () => filledArray(sizeY, randomNumberGenerator)
     return filledArray(sizeX, randomArrayGenerator);
 }
@@ -33,9 +33,23 @@ function MSE(actual, expected) {
     return squaredError / actual.length;
 }
 
+function getClass(output) {
+    let max = 0;
+    let outputClass = 0;
+    output.forEach((value, i) => {
+        if (value > max) {
+            max = value;
+            outputClass = i;
+        }
+    })
+
+    return outputClass;
+}
+
 module.exports = {
     readFileSync,
     writeFileSync,
     filledArray,
-    randomMatrixInitializer
+    randomMatrixInitializer,
+    getClass
 };

@@ -1,31 +1,47 @@
 const { Sequential, Dense, ReLU, Sigmoid } = require("../index.js");
+const utils = require("../utils.js");
+
+const intputSize = 700;
+const hiddenLayerSize = 300;
+const outputSize = 8;
+
+const randomData = utils.filledArray(intputSize, () => Math.random());
+const expectedOutput = utils.filledArray(outputSize, () => 0);
+const expectedClass = 2;
+expectedOutput[expectedClass] = 1;
 
 console.log("Build a simple model and feed it some data");
 const model = Sequential()
-    .add(Dense(5, 5, ReLU()))
-    .add(Dense(5, 3, Sigmoid()));
+    .add(Dense(intputSize, hiddenLayerSize, ReLU()))
+    .add(Dense(hiddenLayerSize, hiddenLayerSize, ReLU()))
+    .add(Dense(hiddenLayerSize, hiddenLayerSize, ReLU()))
+    .add(Dense(hiddenLayerSize, hiddenLayerSize, ReLU()))
+    .add(Dense(hiddenLayerSize, hiddenLayerSize, Sigmoid()))
+    .add(Dense(hiddenLayerSize, hiddenLayerSize, Sigmoid()))
+    .add(Dense(hiddenLayerSize, outputSize, Sigmoid()));
 
-const randomData = [1, 0, 0, 0, 0];
 console.log(model.feedForward(randomData));
 //model.print();
-model.save("model.ai");
+model.save("sample.ai");
 
 console.log("\nLoad the model from file and feed it the same data (output should be the same as before)");
-const reloadedModel = Sequential();
-reloadedModel.load("model.ai");
+const reloadedModel = Sequential(1);
+reloadedModel.load("sample.ai");
 console.log(reloadedModel.feedForward(randomData));
 //reloadedModel.print();
 
-console.log(`\nLet's train our model to recognize that it should predict class 0 for this input: ${randomData}`);
+console.log(`\nLet's train our model to recognize that it should predict class ${expectedClass}`);
 console.log("Start training");
-for (let i = 0; i < 2000; i++) {
+for (let i = 0; i < 100; i++) {
     reloadedModel.feedForward(randomData);
-    reloadedModel.fit([1, 0, 0]);
+    reloadedModel.fit(expectedOutput);
 }
 console.log("Training done.");
 
-console.log(`\nPredict ${randomData}`);
-console.log(reloadedModel.feedForward(randomData));
-console.log(`Class is ${reloadedModel.predict(randomData)}!`);
+console.log(`\nPredict`);
+const output = reloadedModel.feedForward(randomData)
+const outputClass = utils.getClass(output);
+console.log(output);
+console.log(`Class is ${outputClass}!`);
 
-//reloadedModel.print();
+reloadedModel.save("sample.ai");

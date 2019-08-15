@@ -19,6 +19,7 @@ class Dense {
         this.inputSize = inputSize + (addBias ? 1 : 0);
         this.outputSize = outputSize;
         this.activation = activation;
+        this.input = null;
 
         if (weights) {
             if (weights.length !== this.inputSize || weights[0].length !== this.outputSize) {
@@ -34,10 +35,10 @@ class Dense {
 
     feedForward(input) {
         // w = [w, b]
-        const biasedInput = this.addBias(input);
+        this.input = this.addBias(input);
 
-        if (this.inputSize !== biasedInput.length) {
-            console.log(`Incompatible input for feedforward operation. Expected ${this.inputSize}, actual: ${biasedInput.length}`);
+        if (this.inputSize !== this.input.length) {
+            console.log(`Incompatible input for feedforward operation. Expected ${this.inputSize}, actual: ${this.input.length}`);
             return utils.filledArray(this.outputSize, () => 0);
         }
 
@@ -45,7 +46,7 @@ class Dense {
         const output = utils.filledArray(this.outputSize, () => 0);
         for(let i = 0; i < this.inputSize; i++) {
             for(let j = 0; j < this.outputSize; j++) {
-                output[j] += this.weights[i][j] * biasedInput[i]
+                output[j] += this.weights[i][j] * this.input[i]
             }
         }
         
@@ -68,10 +69,10 @@ class Dense {
     }
 
     updateWeights(learningRate) {
-        // wij = wij - lr * errorij
+        // wij = wij - lr * errorj * inputi
         for (let i = 0; i < this.inputSize; i++) {
-            for (let j = 0; j < this.outputSize; j++) {
-                this.weights[i][j] += learningRate * this.errors[j];
+            for (let j = 0; j < this.outputSize + 1; j++) {
+                this.weights[i][j] += learningRate * this.errors[j] * this.input[i];
             }
         }
     }

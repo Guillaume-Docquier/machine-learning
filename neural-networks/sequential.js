@@ -23,16 +23,7 @@ class Sequential {
     predict(input) {
         const output = this.feedForward(input);
 
-        let max = 0;
-        let predictedClass = 0;
-        output.forEach((value, i) => {
-            if (value > max) {
-                max = value;
-                predictedClass = i;
-            }
-        })
-
-        return predictedClass;
+        return utils.getClass(output);
     }
 
     fit(expected) {
@@ -49,6 +40,8 @@ class Sequential {
         this.layers.forEach(layer => console.log(layer));
     }
 
+    // TODO Save learning rate
+    // TODO Add serialize method on layers, they save temp data like input / errors / output
     save(filePath) {
         utils.writeFileSync(filePath, JSON.stringify(this.layers));
     }

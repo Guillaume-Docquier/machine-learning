@@ -20,3 +20,6 @@ https://egghead.io/lessons/python-course-introduction-fully-connected-neural-net
 
 3BLUE1BROWN SERIES  S3 • E1 - E4
 https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi
+
+ADAM optimizer
+https://machinelearningmastery.com/adam-optimization-algorithm-for-deep-learning/

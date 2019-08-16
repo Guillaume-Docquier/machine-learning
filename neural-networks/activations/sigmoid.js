@@ -23,6 +23,13 @@ class Sigmoid {
     transfer() {
         return this.output.map(output => output * (1 - output));
     }
+
+    serialize() {
+        const { type } = this;
+        return {
+            type
+        };
+    }
 }
 
 module.exports = {

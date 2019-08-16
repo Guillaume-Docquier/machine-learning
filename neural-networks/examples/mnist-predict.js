@@ -5,8 +5,7 @@ const MNIST_IMAGE_SIZE = 28;
 
 const { training, test } = mnist.set(0, 10);
 
-const model = Sequential();
-model.load("mnist.ai");
+const model = Sequential().load("mnist.ai");
 
 for (let i = 0; i < test.length; i++) {
     printImage(test[i].input);

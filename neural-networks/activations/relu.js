@@ -23,6 +23,13 @@ class ReLU {
     transfer() {
         return this.output.map(output => output > 0 ? 1 : 0);
     }
+
+    serialize() {
+        const { type } = this;
+        return {
+            type
+        };
+    }
 }
 
 module.exports = {

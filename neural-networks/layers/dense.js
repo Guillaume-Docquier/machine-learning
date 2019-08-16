@@ -80,6 +80,17 @@ class Dense {
     addBias(input) {
         return [...input, 1.0];
     }
+
+    serialize() {
+        const { type, inputSize, outputSize, activation, weights } = this;
+        return {
+            type,
+            inputSize,
+            outputSize,
+            activation: activation.serialize(),
+            weights
+        }
+    }
 }
 
 module.exports = {

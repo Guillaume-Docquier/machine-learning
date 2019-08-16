@@ -40,19 +40,26 @@ class Sequential {
         this.layers.forEach(layer => console.log(layer));
     }
 
-    // TODO Save learning rate
-    // TODO Add serialize method on layers, they save temp data like input / errors / output
     save(filePath) {
-        utils.writeFileSync(filePath, JSON.stringify(this.layers));
+        const { learningRate, layers } = this;
+        const serialized = {
+            learningRate,
+            layers: layers.map(layer => layer.serialize())
+        }
+
+        utils.writeFileSync(filePath, JSON.stringify(serialized));
     }
 
     load(filePath) {
-        const layerObjs = JSON.parse(utils.readFileSync(filePath));
+        const { learningRate, layers } = JSON.parse(utils.readFileSync(filePath));
 
-        this.layers = layerObjs.map(layerObj => LayerFactory(layerObj));
+        this.learningRate = Number(learningRate);
+        this.layers = layers.map(layer => LayerFactory(layer));
+
+        return this;
     }
 };
 
 module.exports = {
-    Sequential: args => new Sequential(args)
+    Sequential: (...args) => new Sequential(...args)
 }

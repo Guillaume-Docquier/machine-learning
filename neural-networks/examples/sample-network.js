@@ -11,7 +11,7 @@ const expectedClass = 2;
 expectedOutput[expectedClass] = 1;
 
 console.log("Build a simple model and feed it some data");
-const model = Sequential()
+const model = Sequential(0.02)
     .add(Dense(intputSize,            hiddenLayerSize,       ReLU()))
     .add(Dense(hiddenLayerSize,       hiddenLayerSize,       ReLU()))
     .add(Dense(hiddenLayerSize,       hiddenLayerSize - 100, ReLU()))
@@ -25,8 +25,7 @@ console.log(model.feedForward(randomData));
 model.save("sample.ai");
 
 console.log("\nLoad the model from file and feed it the same data (output should be the same as before)");
-const reloadedModel = Sequential(1);
-reloadedModel.load("sample.ai");
+const reloadedModel = Sequential().load("sample.ai");
 console.log(reloadedModel.feedForward(randomData));
 //reloadedModel.print();
 

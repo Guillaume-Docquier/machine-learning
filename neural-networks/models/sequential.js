@@ -1,5 +1,5 @@
-const utils = require("./utils.js");
-const { LayerFactory } = require("./layers/layer-factory.js")
+const utils = require("../utils.js");
+const { LayerFactory } = require("../layers")
 
 class Sequential {
     constructor(learningRate = 0.01) {

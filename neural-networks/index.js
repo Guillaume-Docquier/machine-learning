@@ -1,11 +1,14 @@
-const { Sequential } = require("./sequential.js");
-const { Dense } = require("./layers/dense.js");
-const { ReLU } = require("./activations/relu.js");
-const { Sigmoid } = require("./activations/sigmoid.js");
+const { Sequential } = require("./models");
+const { Dense } = require("./layers");
+const { ReLU, Sigmoid } = require("./activations");
+const { MSE } = require("./losses");
+const { SGD } = require("./optimizers");
 
 module.exports = {
     Sequential,
     Dense,
     ReLU,
-    Sigmoid
+    Sigmoid,
+    MSE,
+    SGD
 }

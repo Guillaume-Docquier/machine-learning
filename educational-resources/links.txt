@@ -23,3 +23,7 @@ https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-
 
 ADAM optimizer
 https://machinelearningmastery.com/adam-optimization-algorithm-for-deep-learning/
+
+Kudos to Jason Brownlee, PhD for his series on machine learning
+Great explanations, and sometimes even code!
+https://machinelearningmastery.com/

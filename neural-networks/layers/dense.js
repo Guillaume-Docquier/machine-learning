@@ -1,5 +1,5 @@
 const utils = require("../utils.js");
-const { ActivationFactory } = require("../activations/activation-factory");
+const { ActivationFactory } = require("../activations");
 
 const LAYER_TYPE = "Dense"
 

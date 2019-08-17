@@ -1,4 +1,29 @@
+const LOSS_TYPE = "MSE";
+
+const MSEFactory = function(lossData) {
+    if (lossData.type !== LOSS_TYPE) {
+        return false;
+    }
+
+    return new MSE();
+};
+
+const MSESerializer = function(loss) {
+    if (loss.type !== LOSS_TYPE) {
+        return false;
+    }
+
+    const { type } = loss;
+    return {
+        type
+    };
+};
+
 class MSE {
+    constructor() {
+        this.type = LOSS_TYPE
+    }
+
     compute(expectedValues, actualValues) {
         const squaredError = actualValues.reduce(
             (sum, actualValue, i) => sum + Math.pow(expectedValues[i] - actualValue, 2),
@@ -14,5 +39,7 @@ class MSE {
 }
 
 module.exports = {
-    MSE: () => new MSE()
+    MSE: () => new MSE(),
+    MSEFactory,
+    MSESerializer
 }

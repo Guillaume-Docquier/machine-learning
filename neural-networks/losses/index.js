@@ -1,5 +1,7 @@
-const { MSE } = require("./mse.js");
+const { MSE, MSEFactory, MSESerializer } = require("./mse.js");
 
 module.exports = {
-    MSE
+    MSE,
+    factories: [MSEFactory],
+    serializers: [MSESerializer]
 }

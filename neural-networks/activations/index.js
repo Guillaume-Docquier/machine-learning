@@ -1,9 +1,9 @@
-const { ReLU } = require("./relu.js");
-const { Sigmoid } = require("./sigmoid.js");
-const { ActivationFactory } = require("./activation-factory.js");
+const { ReLU, ReLUFactory, ReLUSerializer } = require("./relu.js");
+const { Sigmoid, SigmoidFactory, SigmoidSerializer } = require("./sigmoid.js");
 
 module.exports = {
     ReLU,
     Sigmoid,
-    ActivationFactory
+    factories: [ReLUFactory, SigmoidFactory],
+    serializers: [ReLUSerializer, SigmoidSerializer]
 }

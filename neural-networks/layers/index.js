@@ -1,7 +1,7 @@
-const { Dense } = require("./dense.js");
-const { LayerFactory } = require("./layer-factory.js");
+const { Dense, DenseFactory, DenseSerializer } = require("./dense.js");
 
 module.exports = {
     Dense,
-    LayerFactory
+    factories: [DenseFactory],
+    serializers: [DenseSerializer]
 }

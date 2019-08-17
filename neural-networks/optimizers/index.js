@@ -1,5 +1,7 @@
-const { SGD } = require("./sgd.js");
+const { SGD, SGDFactory, SGDSerializer } = require("./sgd.js");
 
 module.exports = {
-    SGD
+    SGD,
+    factories: [SGDFactory],
+    serializers: [SGDSerializer]
 }

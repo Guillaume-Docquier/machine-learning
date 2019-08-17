@@ -1,5 +1,6 @@
 const utils = require("../utils.js");
-const { LayerFactory } = require("../layers")
+const { Factory } = require("../factory.js")
+const { Serializer } = require("../serializer.js")
 const { MSE } = require("../losses");
 const { SGD } = require("../optimizers");
 
@@ -44,20 +45,21 @@ class Sequential {
     }
 
     save(filePath) {
-        const { learningRate, layers } = this;
         const serialized = {
-            learningRate,
-            layers: layers.map(layer => layer.serialize())
+            optimizer: Serializer(this.optimizer),
+            loss: Serializer(this.loss),
+            layers: this.layers.map(layer => Serializer(layer))
         }
 
-        utils.writeFileSync(filePath, JSON.stringify(serialized));
+        utils.writeFileSync(filePath, serialized);
     }
 
     load(filePath) {
-        const { learningRate, layers } = JSON.parse(utils.readFileSync(filePath));
+        const { optimizer, loss, layers } = utils.readFileSync(filePath);
 
-        this.learningRate = Number(learningRate);
-        this.layers = layers.map(layer => LayerFactory(layer));
+        this.optimizer = Factory(optimizer);
+        this.loss = Factory(loss);
+        this.layers = layers.map(layer => Factory(layer));
 
         return this;
     }

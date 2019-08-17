@@ -8,6 +8,17 @@ const SigmoidFactory = function(activationData) {
     return new Sigmoid();
 }
 
+const SigmoidSerializer = function(activation) {
+    if (activation.type !== ACTIVATION_TYPE) {
+        return false;
+    }
+
+    const { type } = activation;
+    return {
+        type
+    };
+}
+
 class Sigmoid {
     constructor() {
         this.type = ACTIVATION_TYPE;
@@ -23,16 +34,10 @@ class Sigmoid {
     transfer() {
         return this.output.map(output => output * (1 - output));
     }
-
-    serialize() {
-        const { type } = this;
-        return {
-            type
-        };
-    }
 }
 
 module.exports = {
     Sigmoid: () => new Sigmoid(),
-    SigmoidFactory
+    SigmoidFactory,
+    SigmoidSerializer
 }

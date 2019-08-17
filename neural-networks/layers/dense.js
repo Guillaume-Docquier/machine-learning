@@ -1,16 +1,30 @@
 const utils = require("../utils.js");
-const { ActivationFactory } = require("../activations");
 
 const LAYER_TYPE = "Dense"
 
-const DenseFactory = function(layerData) {
+const DenseFactory = function(layerData, Factory) {
     if (layerData.type !== LAYER_TYPE) {
         return false;
     }
 
-    const activation = ActivationFactory(layerData.activation);
+    const activation = Factory(layerData.activation);
 
     return new Dense(layerData.inputSize, layerData.outputSize, activation, false, layerData.weights);
+}
+
+const DenseSerializer = function(layer, Serializer) {
+    if (layer.type !== LAYER_TYPE) {
+        return false;
+    }
+
+    const { type, inputSize, outputSize, activation, weights } = layer;
+    return {
+        type,
+        inputSize,
+        outputSize,
+        activation: Serializer(activation),
+        weights
+    }
 }
 
 class Dense {
@@ -80,20 +94,10 @@ class Dense {
     addBias(input) {
         return [...input, 1.0];
     }
-
-    serialize() {
-        const { type, inputSize, outputSize, activation, weights } = this;
-        return {
-            type,
-            inputSize,
-            outputSize,
-            activation: activation.serialize(),
-            weights
-        }
-    }
 }
 
 module.exports = {
     Dense: (...args) => new Dense(...args),
     DenseFactory,
+    DenseSerializer
 }

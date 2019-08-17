@@ -2,7 +2,7 @@ const fs = require("fs");
 const readline = require('readline');
 
 function writeFileSync(filePath, content) {
-    return fs.writeFileSync(filePath, content, handleWriteError);
+    return fs.writeFileSync(filePath, JSON.stringify(content), handleWriteError);
 }
 
 function handleWriteError(error) {
@@ -12,7 +12,7 @@ function handleWriteError(error) {
 }
 
 function readFileSync(filePath) {
-    return fs.readFileSync(filePath, 'utf8')
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
 
 function filledArray(size, fillGenerator) {
@@ -21,7 +21,7 @@ function filledArray(size, fillGenerator) {
 
 function randomMatrixInitializer(sizeX, sizeY) {
     const randomNumberGenerator = () => Math.random() / 100; // It seems big initial weights can mess backprop 
-    const randomArrayGenerator = () => filledArray(sizeY, randomNumberGenerator)
+    const randomArrayGenerator = () => filledArray(sizeY, randomNumberGenerator);
     return filledArray(sizeX, randomArrayGenerator);
 }
 
@@ -33,7 +33,7 @@ function getClass(output) {
             max = value;
             outputClass = i;
         }
-    })
+    });
 
     return outputClass;
 }

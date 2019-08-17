@@ -1,4 +1,5 @@
 const fs = require("fs");
+const readline = require('readline');
 
 function writeFileSync(filePath, content) {
     return fs.writeFileSync(filePath, content, handleWriteError);
@@ -24,15 +25,6 @@ function randomMatrixInitializer(sizeX, sizeY) {
     return filledArray(sizeX, randomArrayGenerator);
 }
 
-function MSE(actual, expected) {
-    const squaredError = 0;
-    for(let i = 0; i < actual.length; i++) {
-        squaredError += Math.pow(actual[i] - expected[i], 2);
-    }
-
-    return squaredError / actual.length;
-}
-
 function getClass(output) {
     let max = 0;
     let outputClass = 0;
@@ -46,10 +38,16 @@ function getClass(output) {
     return outputClass;
 }
 
+function progress(text) {
+    readline.cursorTo(process.stdout, 0);
+    process.stdout.write(text);
+}
+
 module.exports = {
     readFileSync,
     writeFileSync,
     filledArray,
     randomMatrixInitializer,
-    getClass
+    getClass,
+    progress
 };

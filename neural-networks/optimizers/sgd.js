@@ -1,3 +1,9 @@
+class SGD {
+    constructor(config = {}) {
+        this.learningRate = config.learningRate || 0.01;
+    }
+}
+
 module.exports = {
-    SGD: () => console.log("SGD")
+    SGD: (...args) => new SGD(...args)
 }

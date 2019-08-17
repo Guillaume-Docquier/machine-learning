@@ -11,7 +11,7 @@ const expectedClass = 2;
 expectedOutput[expectedClass] = 1;
 
 console.log("Build a simple model and feed it some data");
-const model = Sequential(0.02)
+const model = Sequential()
     .add(Dense(intputSize,            hiddenLayerSize,       ReLU()))
     .add(Dense(hiddenLayerSize,       hiddenLayerSize,       ReLU()))
     .add(Dense(hiddenLayerSize,       hiddenLayerSize - 100, ReLU()))

@@ -1,11 +1,14 @@
 const utils = require("../utils.js");
 const { LayerFactory } = require("../layers")
+const { MSE } = require("../losses");
+const { SGD } = require("../optimizers");
 
 class Sequential {
-    constructor(learningRate = 0.01) {
+    constructor(config = {}) {
         this.layers = [];
         this.output = null;
-        this.learningRate = learningRate;
+        this.optimizer = config.optimizer || SGD();
+        this.loss = config.loss || MSE();
     }
 
     add(layer) {
@@ -27,13 +30,13 @@ class Sequential {
     }
 
     fit(expected) {
-        const outputErrors = this.output.map((output, i) => expected[i] - output);
+        const outputErrors = this.loss.derivative(expected, this.output);
 
         // Backprop
         this.layers.reduceRight((nextErrors, layer) => layer.backPropagate(nextErrors), outputErrors);
 
         // Update
-        this.layers.forEach(layer => layer.updateWeights(this.learningRate));
+        this.layers.forEach(layer => layer.updateWeights(this.optimizer.learningRate));
     }
 
     print() {

@@ -1,5 +1,5 @@
 const mnist = require('mnist');
-const { Sequential, Dense, ReLU, Sigmoid } = require("../index.js");
+const { Sequential, Dense, ReLU, Sigmoid, SGD } = require("../index.js");
 const utils = require("../utils.js");
 
 const MNIST_IMAGE_SIZE = 28;
@@ -9,18 +9,18 @@ const MNIST_NB_CLASSES = 10;
 
 const { training, test } = mnist.set(8000, 2000);
 
-const model = Sequential(0.1)
+const model = Sequential({ optimizer: SGD({ learningRate: 0.1 }) })
     .add(Dense(MNIST_NB_PIXELS,         HIDDEN_LAYER_NB_NEURONS, ReLU()))
     .add(Dense(HIDDEN_LAYER_NB_NEURONS, MNIST_NB_CLASSES,        Sigmoid()));
 
 console.log("Training...");
 for (let i = 0; i < training.length; i++) {
-    console.log(`Iteration ${i + 1} of ${training.length}`);
+    utils.progress(`Iteration ${i + 1} of ${training.length}`);
     model.feedForward(training[i].input);
     model.fit(training[i].output);
 }
 
-console.log("Testing...");
+console.log("\n\nTesting...");
 let correct = 0;
 for (let i = 0; i < test.length; i++) {
     const predicted = model.predict(test[i].input);

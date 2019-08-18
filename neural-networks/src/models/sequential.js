@@ -18,30 +18,57 @@ class Sequential {
         return this;
     }
 
-    feedForward(input) {
-        this.output = this.layers.reduce((nextInput, layer) => layer.feedForward(nextInput), input);
-
-        return this.output;
-    }
-
     predict(input) {
-        const output = this.feedForward(input);
+        const { output } = this.feedForward(input);
 
         return utils.getClass(output);
     }
 
-    fit(expected) {
-        const outputErrors = this.loss.derivative(expected, this.output);
+    // TODO Return losses
+    train(data, nbEpochs) {
+        const startTime = new Date();
+        for (let i = 0; i < nbEpochs; i++) {
+            console.log(`\nEpoch ${i + 1} of ${nbEpochs}`);
+            utils.shuffleInPlace(data);
+            this.optimizer.step(data, this);
+        }
 
-        // Backprop
-        this.layers.reduceRight((nextErrors, layer) => layer.backPropagate(nextErrors), outputErrors);
-
-        // Update
-        this.layers.forEach(layer => layer.updateWeights(this.optimizer.learningRate));
+        const trainTime = (new Date() - startTime);
+        const avgEpochTime = trainTime / nbEpochs;
+        console.log(`\nTraning done in ${trainTime / 1000}s. Avg epoch time: ${avgEpochTime.toFixed(3)}ms`);
     }
 
-    print() {
-        this.layers.forEach(layer => console.log(layer));
+    feedForward(data) {
+        let nextInput = data;
+        let layerInputs = [];
+        for (let i = 0; i < this.layers.length; i++) {
+            const { input, output } = this.layers[i].feedForward(nextInput);
+            nextInput = output;
+            layerInputs.push(input);
+        }
+
+        return {
+            inputs: layerInputs,
+            output: nextInput
+        };
+    }
+
+    backprop(expected, actual, layerInputs) {
+        const outputErrors = this.loss.derivative(expected, actual);
+
+        let nextErrors = outputErrors;
+        let layerGradients = [];
+        for (let i = this.layers.length - 1; i >= 0; i--) {
+            const { errors, gradients } = this.layers[i].backprop(nextErrors, layerInputs[i]);
+            nextErrors = errors;
+            layerGradients.push(gradients);
+        }
+
+        return layerGradients;
+    }
+
+    update(layerGradients) {
+        this.layers.forEach((layer, i) => layer.updateWeights(this.optimizer.learningRate, layerGradients[i]));
     }
 
     save(filePath) {

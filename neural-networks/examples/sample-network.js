@@ -20,29 +20,20 @@ const model = Sequential({ optimizer: SGD({ learningRate: 0.2 }) })
     .add(Dense(hiddenLayerSize - 200, hiddenLayerSize,       Sigmoid()))
     .add(Dense(hiddenLayerSize,       outputSize,            Sigmoid()));
 
-console.log(model.feedForward(randomData));
-//model.print();
+//console.log(model.feedForward(randomData));
 model.save("sample.ai");
 
 console.log("\nLoad the model from file and feed it the same data (output should be the same as before)");
 const reloadedModel = Sequential().load("sample.ai");
-console.log(reloadedModel.feedForward(randomData));
-//console.log(reloadedModel.optimizer);
-//console.log(reloadedModel.loss);
-//reloadedModel.print();
+//console.log(reloadedModel.feedForward(randomData));
 
 console.log(`\nLet's train our model to recognize that it should predict class ${expectedClass}`);
 console.log("Start training");
-for (let i = 0; i < 100; i++) {
-    reloadedModel.feedForward(randomData);
-    reloadedModel.fit(expectedOutput);
-}
+reloadedModel.train([{input: randomData, output: expectedOutput}], 100);
 console.log("Training done.");
 
 console.log(`\nPredict`);
-const output = reloadedModel.feedForward(randomData)
-const outputClass = utils.getClass(output);
-console.log(output);
+const outputClass = reloadedModel.predict(randomData);
 console.log(`Class is ${outputClass}!`);
 
 reloadedModel.save("sample.ai");

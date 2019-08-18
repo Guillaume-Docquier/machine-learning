@@ -1,5 +1,5 @@
 const utils = require("../utils.js");
-const { Factory } = require("../factory.js")
+const { Deserializer } = require("../deserializer.js")
 const { Serializer } = require("../serializer.js")
 const { MSE } = require("../losses");
 const { SGD } = require("../optimizers");
@@ -57,9 +57,9 @@ class Sequential {
     load(filePath) {
         const { optimizer, loss, layers } = utils.readFileSync(filePath);
 
-        this.optimizer = Factory(optimizer);
-        this.loss = Factory(loss);
-        this.layers = layers.map(layer => Factory(layer));
+        this.optimizer = Deserializer(optimizer);
+        this.loss = Deserializer(loss);
+        this.layers = layers.map(layer => Deserializer(layer));
 
         return this;
     }

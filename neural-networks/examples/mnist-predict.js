@@ -1,5 +1,5 @@
-const mnist = require('mnist');
-const { Sequential } = require("../index.js");
+const mnist = require("mnist");
+const { Sequential } = require("../src");
 
 const MNIST_IMAGE_SIZE = 28;
 

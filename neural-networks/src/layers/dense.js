@@ -2,12 +2,12 @@ const utils = require("../utils.js");
 
 const LAYER_TYPE = "Dense"
 
-const DenseFactory = function(layerData, Factory) {
+const DenseDeserializer = function(layerData, Deserializer) {
     if (layerData.type !== LAYER_TYPE) {
         return false;
     }
 
-    const activation = Factory(layerData.activation);
+    const activation = Deserializer(layerData.activation);
 
     return new Dense(layerData.inputSize, layerData.outputSize, activation, false, layerData.weights);
 }
@@ -98,6 +98,6 @@ class Dense {
 
 module.exports = {
     Dense: (...args) => new Dense(...args),
-    DenseFactory,
+    DenseDeserializer,
     DenseSerializer
 }

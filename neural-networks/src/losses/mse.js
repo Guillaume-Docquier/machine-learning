@@ -1,6 +1,6 @@
 const LOSS_TYPE = "MSE";
 
-const MSEFactory = function(lossData) {
+const MSEDeserializer = function(lossData) {
     if (lossData.type !== LOSS_TYPE) {
         return false;
     }
@@ -40,6 +40,6 @@ class MSE {
 
 module.exports = {
     MSE: () => new MSE(),
-    MSEFactory,
+    MSEDeserializer,
     MSESerializer
 }

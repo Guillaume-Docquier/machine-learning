@@ -1,5 +1,5 @@
 const fs = require("fs");
-const readline = require('readline');
+const readline = require("readline");
 
 function writeFileSync(filePath, content) {
     return fs.writeFileSync(filePath, JSON.stringify(content), handleWriteError);
@@ -12,7 +12,7 @@ function handleWriteError(error) {
 }
 
 function readFileSync(filePath) {
-    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
 
 function filledArray(size, fillGenerator) {

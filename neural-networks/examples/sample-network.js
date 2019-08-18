@@ -1,5 +1,5 @@
-const { Sequential, Dense, ReLU, Sigmoid, SGD } = require("../index.js");
-const utils = require("../utils.js");
+const { Sequential, Dense, ReLU, Sigmoid, SGD } = require("../src");
+const utils = require("../src/utils.js");
 
 const intputSize = 700;
 const hiddenLayerSize = 300;

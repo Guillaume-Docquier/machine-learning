@@ -1,14 +1,14 @@
-const ACTIVATION_TYPE = "ReLU";
+const ACTIVATION_TYPE = "Sigmoid";
 
-const ReLUFactory = function(activationData) {
+const SigmoidDeserializer = function(activationData) {
     if (activationData.type !== ACTIVATION_TYPE) {
         return false;
     }
 
-    return new ReLU();
-};
+    return new Sigmoid();
+}
 
-const ReLUSerializer = function(activation) {
+const SigmoidSerializer = function(activation) {
     if (activation.type !== ACTIVATION_TYPE) {
         return false;
     }
@@ -17,27 +17,27 @@ const ReLUSerializer = function(activation) {
     return {
         type
     };
-};
+}
 
-class ReLU {
+class Sigmoid {
     constructor() {
         this.type = ACTIVATION_TYPE;
         this.output = null;
     }
 
     activate(input) {
-        this.output = input.map(value => Math.max(0, value));
+        this.output = input.map(value => 1 / (1 + Math.exp(-value)));
 
         return this.output;
     }
 
     transfer() {
-        return this.output.map(output => output > 0 ? 1 : 0);
+        return this.output.map(output => output * (1 - output));
     }
 }
 
 module.exports = {
-    ReLU: () => new ReLU(),
-    ReLUFactory,
-    ReLUSerializer
+    Sigmoid: () => new Sigmoid(),
+    SigmoidDeserializer,
+    SigmoidSerializer
 }

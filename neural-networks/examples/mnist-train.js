@@ -1,6 +1,6 @@
-const mnist = require('mnist');
-const { Sequential, Dense, ReLU, Sigmoid, SGD } = require("../index.js");
-const utils = require("../utils.js");
+const mnist = require("mnist");
+const { Sequential, Dense, ReLU, Sigmoid, SGD } = require("../src");
+const utils = require("../src/utils.js");
 
 const MNIST_IMAGE_SIZE = 28;
 const MNIST_NB_PIXELS = MNIST_IMAGE_SIZE * MNIST_IMAGE_SIZE;

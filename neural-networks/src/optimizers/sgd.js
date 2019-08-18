@@ -1,6 +1,6 @@
 const OPTIMIZER_TYPE = "SGD";
 
-const SGDFactory = function(optimizerData) {
+const SGDDeserializer = function(optimizerData) {
     if (optimizerData.type !== OPTIMIZER_TYPE) {
         return false;
     }
@@ -29,6 +29,6 @@ class SGD {
 
 module.exports = {
     SGD: (...args) => new SGD(...args),
-    SGDFactory,
+    SGDDeserializer,
     SGDSerializer
 }

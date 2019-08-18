@@ -13,9 +13,12 @@ const model = Sequential({ optimizer: SGD({ learningRate: 0.1 }) })
     .add(Dense(MNIST_NB_PIXELS,         HIDDEN_LAYER_NB_NEURONS, ReLU()))
     .add(Dense(HIDDEN_LAYER_NB_NEURONS, MNIST_NB_CLASSES,        Sigmoid()));
 
+const startTime = new Date();
+
 console.log("Training...");
 for (let i = 0; i < training.length; i++) {
-    utils.progress(`Iteration ${i + 1} of ${training.length}`);
+    const avgIterationTime = (new Date() - startTime) / i + 1;
+    utils.progress(`Iteration ${i + 1} of ${training.length}. Avg time per iteration: ${avgIterationTime.toFixed(3)}ms`);
     model.feedForward(training[i].input);
     model.fit(training[i].output);
 }

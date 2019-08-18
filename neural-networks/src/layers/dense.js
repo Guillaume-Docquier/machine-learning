@@ -68,25 +68,40 @@ class Dense {
         return this.activation.activate(output);
     }
 
-    backPropagate(errors) {
+    backPropagate(previousErrors) {
         const derivatives = this.activation.transfer();
-        this.errors = errors.map((error, j) => error * derivatives[j]);
+        const currentErrors = previousErrors.map((previousError, j) => previousError * derivatives[j]);
 
         const nextErrors = utils.filledArray(this.inputSize, () => 0);
         for (let i = 0; i < this.inputSize; i++) {
             for (let j = 0; j < this.outputSize; j++) {
-                nextErrors[i] += this.weights[i][j] * this.errors[j];
+                nextErrors[i] += this.weights[i][j] * currentErrors[j];
             }
         }
 
+        this._setGradients(currentErrors);
+
         return nextErrors;
+    }
+
+    // This is a bit wierd but has a 3x performance increase over storing gradients in a input*output matrix
+    _setGradients(errors) {
+        this.gradients = utils.filledArray(Math.max(this.inputSize, this.outputSize), () => ({}));
+        for (let i = 0; i < this.inputSize; i++) {
+            this.gradients[i].input = this.input[i];
+        }
+        
+        for (let j = 0; j < this.outputSize; j++) {
+            this.gradients[j].error = errors[j];
+        }
     }
 
     updateWeights(learningRate) {
         // wij = wij - lr * errorj * inputi
         for (let i = 0; i < this.inputSize; i++) {
+            const input = this.gradients[i].input;
             for (let j = 0; j < this.outputSize; j++) {
-                this.weights[i][j] += learningRate * this.errors[j] * this.input[i];
+                this.weights[i][j] += learningRate * input * this.gradients[j].error;
             }
         }
     }

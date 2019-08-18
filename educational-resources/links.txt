@@ -27,3 +27,11 @@ https://machinelearningmastery.com/adam-optimization-algorithm-for-deep-learning
 Kudos to Jason Brownlee, PhD for his series on machine learning
 Great explanations, and sometimes even code!
 https://machinelearningmastery.com/
+
+Batch gradient descent:
+It's been hard to find on internet how to handle batch gradient descent. Stochastic gradient descent is easy.
+You feed forward once, backprop once, update the weights once. But in the case of batch, I was left wondering how to handle multiple feed forwards.
+What do you do with the errors ? How do you backprop once?
+The answer is that the batch gradient descent doesn save any backpropagation, it simply saves you weight updates.
+During a mini batch, you backprop for each example, store it away and update the weights once after the bacth.
+You have to save all the inputs and errors, and when you update the weights, average the gradient.

@@ -9,53 +9,12 @@ const tests = [];
 
 let dim = 0;
 for (let i = 0; i < 10; i++) {
-    dim += 100
-    tests.push(
-        {
-            method: methodNames.new,
-            dim1: 1,
-            dim2: dim * dim
-        },
-        {
-            method: methodNames.push,
-            dim1: 1,
-            dim2: dim * dim
-        },
-        {
-            method: methodNames.new,
-            dim1: dim,
-            dim2: dim
-        },
-        {
-            method: methodNames.push,
-            dim1: dim,
-            dim2: dim
-        },
-    );
+    dim += 103
+    tests.push(...createTests(dim));
 }
 
-tests.push(
-    {
-        method: methodNames.new,
-        dim1: 1,
-        dim2: 10 * 10
-    },
-    {
-        method: methodNames.new,
-        dim1: 10,
-        dim2: 10
-    },
-    {
-        method: methodNames.push,
-        dim1: 1,
-        dim2: 10 * 10
-    },
-    {
-        method: methodNames.push,
-        dim1: 10,
-        dim2: 10
-    }
-);
+tests.push(...createTests(10)); // Very small
+tests.push(...createTests(216)); // ~ Cube root of 10.000.000
 
 const arrayCreationMethods = {
     [methodNames.new]: createMatrixUsingNew,
@@ -65,38 +24,80 @@ const arrayCreationMethods = {
 const columnDisplayNames = {
     name: "Method",
     dimensions: "Dimensions",
-    elements: "Number of elements",
+    elements: "Number of operations",
     ops: "Ops per μs"
 }
 
-console.log("Benchmarking the creation of 50.000.000 elements");
+const targetNbElements = 10 * 1000 * 1000;
+console.log("Benchmarking the creation of 10.000.000 elements");
 
 const generator = Math.random;
-const targetNbElements = 50000000;
-const results = [];
+const creationResults = [];
+const sequentialReadsResults = [];
+const randomReadsResults = [];
 for (let i = 0; i < tests.length; i++) {
     const { method, dim1, dim2 } = tests[i];
-    const iterations = Math.round(targetNbElements / dim1 / dim2);
-    const nbElements = iterations * dim1 * dim2;
+    const dim3 = Math.ceil(targetNbElements / dim1 / dim2);
+    const nbElements = dim3 * dim1 * dim2;
 
     utils.progress(`Test ${i + 1} of ${tests.length}`);
-    const duration = timeArrayCreation(
-        iterations, 
-        () => arrayCreationMethods[method](dim1, dim2, generator)
-    );
 
-    results.push({
-        [columnDisplayNames.name]: method,
-        [columnDisplayNames.dimensions]: `${dim1}x${dim2}`,
-        [columnDisplayNames.ops]: Number((nbElements / (duration * 1000)).toFixed(2)),
-        [columnDisplayNames.elements]: nbElements
-    });
+    const [createDuration, array] = timeArrayCreation(() => arrayCreationMethods[method](dim3, dim1, dim2, generator));
+    creationResults.push(result(method, dim3, dim1, dim2, nbElements, createDuration));
+
+    const sequentialReadsDuration = timeArraySequentialReads(array);
+    sequentialReadsResults.push(result(method, dim3, dim1, dim2, nbElements, sequentialReadsDuration));
+
+    const randomReadsDuration = timeArrayRandomReads(array);
+    randomReadsResults.push(result(method, dim3, dim1, dim2, nbElements, randomReadsDuration));
 }
 
-results.sort(byHighestOps);
+creationResults.sort(byHighestOps);
+sequentialReadsResults.sort(byHighestOps);
+randomReadsResults.sort(byHighestOps);
 
-console.log("\n");
-console.table(results);
+console.log("\nArray creation results:");
+console.table(creationResults);
+
+console.log("\nArray sequential reads results:");
+console.table(sequentialReadsResults);
+
+console.log("\nArray random reads results:");
+console.table(randomReadsResults);
+
+function createTests(dim) {
+    return [
+        {
+            method: methodNames.new,
+            dim1: 1,
+            dim2: dim * dim
+        },
+        {
+            method: methodNames.new,
+            dim1: dim,
+            dim2: dim
+        },
+        {
+            method: methodNames.push,
+            dim1: 1,
+            dim2: dim * dim
+        },
+        {
+            method: methodNames.push,
+            dim1: dim,
+            dim2: dim
+        }
+    ]
+}
+
+function result(method, dim3, dim1, dim2, nbOperations, duration) {
+    return {
+        [columnDisplayNames.name]: method,
+        [columnDisplayNames.dimensions]: `${dim3}x${dim1}x${dim2}`,
+        [columnDisplayNames.ops]: Number((nbOperations / (duration * 1000)).toFixed(2)),
+        [columnDisplayNames.elements]: nbOperations
+    }
+}
 
 function byHighestOps(a, b) {
     if (a[columnDisplayNames.ops] < b[columnDisplayNames.ops]) {
@@ -109,14 +110,62 @@ function byHighestOps(a, b) {
       return 0;
 }
 
-function timeArrayCreation(iterations, arrayCreator) {
+function timeArrayCreation(arrayCreator) {
     let startTime = new Date();
-    for (let i = 0; i < iterations; i++) {
-        const array = arrayCreator();
-    }
+    const array = arrayCreator();
     const duration = new Date() - startTime;
 
-    return duration;
+    return [duration, array];
+}
+
+function timeArraySequentialReads(array3D) {
+    const maxI = array3D.length;
+    const maxJ = array3D[0].length;
+    const maxK = array3D[0][0].length;
+    let value = 0;
+
+    let startTime = new Date();
+    for (let i = 0; i < maxI; i++) {
+        for (let j = 0; j < maxJ; j++) {
+            for (let k = 0; k < maxK; k++) {
+                value = array3D[i][j][k];
+            }
+        }
+    }
+
+    return new Date() - startTime;
+}
+
+function timeArrayRandomReads(array3D) {
+    const maxI = array3D.length;
+    const maxJ = array3D[0].length;
+    const maxK = array3D[0][0].length;
+    let value = 0;
+
+    const randomIndices = [
+        createVectorUsingNew(maxI, () => getRandom(maxI - 1)),
+        createVectorUsingNew(maxJ, () => getRandom(maxJ - 1)),
+        createVectorUsingNew(maxK, () => getRandom(maxK - 1)),
+    ]
+
+    let startTime = new Date();
+    for (let i = 0; i < maxI; i++) {
+        for (let j = 0; j < maxJ; j++) {
+            for (let k = 0; k < maxK; k++) {                
+                const randomI = randomIndices[0][i];
+                const randomJ = randomIndices[1][j];
+                const randomK = randomIndices[2][k];
+
+                value = array3D[randomI][randomJ][randomK];
+            }
+        }
+    }
+
+    return new Date() - startTime;
+}
+
+function getRandom(max) {
+    return Math.round(Math.random() * max);
 }
 
 function createVectorUsingNew(arrayDim, generator) {
@@ -132,10 +181,10 @@ function createVectorUsingPush(arrayDim, generator) {
     return usingPush
 }
 
-function createMatrixUsingNew(i, j, generator) {
-    return createVectorUsingNew(i, () => createVectorUsingNew(j, generator));
+function createMatrixUsingNew(i, j, k, generator) {
+    return createVectorUsingNew(i, () => createVectorUsingNew(j, () => createVectorUsingNew(k, generator)));
 }
 
-function createMatrixUsingPush(i, j, generator) {
-    return createVectorUsingPush(i, () => createVectorUsingPush(j, generator));
+function createMatrixUsingPush(i, j, k, generator) {
+    return createVectorUsingPush(i, () => createVectorUsingPush(j, () => createVectorUsingPush(k, generator)));
 }

@@ -101,7 +101,9 @@ class Dense {
         // wij = wij - lr * gradij
         for (let i = 0; i < this.inputSize; i++) {
             for (let j = 0; j < this.outputSize; j++) {
-                this.weights[i][j] += learningRate * gradients[i][j];
+                for (let k = 0; k < gradients.length; k++) {
+                    this.weights[i][j] += learningRate * gradients[k][i].input * gradients[k][j].error / gradients.length;
+                }
             }
         }
     }

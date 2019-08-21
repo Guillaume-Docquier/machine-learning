@@ -31,7 +31,7 @@ const columnDisplayNames = {
 const targetNbElements = 10 * 1000 * 1000;
 console.log("Benchmarking the creation of 10.000.000 elements");
 
-const generator = Math.random;
+const generator = () => 0;
 const creationResults = [];
 const sequentialReadsResults = [];
 const randomReadsResults = [];
@@ -166,6 +166,19 @@ function timeArrayRandomReads(array3D) {
 
 function getRandom(max) {
     return Math.round(Math.random() * max);
+}
+
+function createVectorUsingNewNoGen(arrayDim, value) {
+    return new Array(arrayDim).fill(value);
+}
+
+function createVectorUsingPushNoGen(arrayDim, value) {
+    const usingPush = [];
+    for (let i = 0; i < arrayDim; i++) {
+        usingPush.push(value);
+    }
+
+    return usingPush
 }
 
 function createVectorUsingNew(arrayDim, generator) {

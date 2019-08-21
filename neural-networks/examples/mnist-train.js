@@ -9,7 +9,7 @@ const MNIST_NB_CLASSES = 10;
 
 const { training, test } = mnist.set(8000, 2000);
 
-const model = Sequential({ optimizer: SGD({ learningRate: 0.1, batchSize: 1 }) })
+const model = Sequential({ optimizer: SGD({ learningRate: 0.2, batchSize: 5 }) })
     .add(Dense(MNIST_NB_PIXELS,         HIDDEN_LAYER_NB_NEURONS, ReLU()))
     .add(Dense(HIDDEN_LAYER_NB_NEURONS, MNIST_NB_CLASSES,        Sigmoid()));
 

@@ -82,28 +82,35 @@ class Dense {
         }
 
         // This is a bit wierd but has a 3x performance increase over storing gradients in a input*output matrix
-        const gradients = utils.generatorFilledArray(Math.max(this.inputSize, this.outputSize), () => ({}));
+        const inputs = utils.valueFilledArray(this.inputSize, 0);
         for (let i = 0; i < this.inputSize; i++) {
-            gradients[i].input = input[i];
+            inputs[i] = input[i];
         }
         
+        const errors = utils.valueFilledArray(this.outputSize, 0);
         for (let j = 0; j < this.outputSize; j++) {
-            gradients[j].error = currentErrors[j];
+            errors[j] = currentErrors[j];
         }
 
         return {
             errors: nextErrors,
-            gradients
+            gradients: [inputs, errors]
         };
     }
 
     updateWeights(learningRate, gradients) {
         // wij = wij - lr * gradij
+        const { inputs, errors, batchSize } = gradients;
         for (let i = 0; i < this.inputSize; i++) {
+            const weightsI = this.weights[i];
+            const inputsInBatch = inputs[i];
             for (let j = 0; j < this.outputSize; j++) {
-                for (let k = 0; k < gradients.length; k++) {
-                    this.weights[i][j] += learningRate * gradients[k][i].input * gradients[k][j].error / gradients.length;
+                let weightIJ = weightsI[j];
+                const errorsInBatch = errors[j];
+                for (let k = 0; k < batchSize; k++) {
+                    weightIJ += learningRate * inputsInBatch[k] * errorsInBatch[k] / batchSize;
                 }
+                weightsI[j] = weightIJ;
             }
         }
     }

@@ -15,14 +15,18 @@ function readFileSync(filePath) {
     return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
 
-function filledArray(size, fillGenerator) {
-    return (new Array(size)).fill(0).map(fillGenerator);
+function valueFilledArray(size, value) {
+    return (new Array(size)).fill(value);
+}
+
+function generatorFilledArray(size, generator) {
+    return (new Array(size)).fill(0).map(generator);
 }
 
 function randomMatrixInitializer(sizeX, sizeY) {
     const randomNumberGenerator = () => Math.random() / 100; // It seems big initial weights can mess backprop 
-    const randomArrayGenerator = () => filledArray(sizeY, randomNumberGenerator);
-    return filledArray(sizeX, randomArrayGenerator);
+    const randomArrayGenerator = () => generatorFilledArray(sizeY, randomNumberGenerator);
+    return generatorFilledArray(sizeX, randomArrayGenerator);
 }
 
 function getClass(output) {
@@ -57,7 +61,8 @@ function shuffleInPlace(array) {
 module.exports = {
     readFileSync,
     writeFileSync,
-    filledArray,
+    valueFilledArray,
+    generatorFilledArray,
     randomMatrixInitializer,
     getClass,
     progress,

@@ -14,7 +14,7 @@ const model = Sequential({ optimizer: SGD({ learningRate: 0.1, batchSize: 1 }) }
     .add(Dense(HIDDEN_LAYER_NB_NEURONS, MNIST_NB_CLASSES,        Sigmoid()));
 
 console.log("Training...");
-model.train(training, 5);
+model.train(training, 3);
 
 console.log("\n\nTesting...");
 let correct = 0;

@@ -34,7 +34,7 @@ class SGD {
     step(data, model) {
         const startTime = new Date();
         for(let i = 0; i < data.length; i += this.batchSize) {
-            const miniBatchLayerGradients = utils.filledArray(model.layers.length, () => []);
+            const miniBatchLayerGradients = utils.generatorFilledArray(model.layers.length, () => []);
             // Forward + backward for 1 batch
             for(let j = 0; j < this.batchSize && j + i < data.length; j++) {
                 const avgIterationTime = (new Date() - startTime) / (i + j + 1);

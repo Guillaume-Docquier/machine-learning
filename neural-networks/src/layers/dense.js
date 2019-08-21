@@ -52,11 +52,11 @@ class Dense {
 
         if (this.inputSize !== biasedInput.length) {
             console.log(`Incompatible input for feedforward operation. Expected ${this.inputSize}, actual: ${biasedInput.length}`);
-            return utils.filledArray(this.outputSize, () => 0);
+            return utils.valueFilledArray(this.outputSize, 0);
         }
 
         // z = w.i
-        const output = utils.filledArray(this.outputSize, () => 0);
+        const output = utils.valueFilledArray(this.outputSize, 0);
         for(let i = 0; i < this.inputSize; i++) {
             for(let j = 0; j < this.outputSize; j++) {
                 output[j] += this.weights[i][j] * biasedInput[i]
@@ -74,7 +74,7 @@ class Dense {
         const derivatives = this.activation.transfer();
         const currentErrors = previousErrors.map((previousError, j) => previousError * derivatives[j]);
 
-        const nextErrors = utils.filledArray(this.inputSize, () => 0);
+        const nextErrors = utils.valueFilledArray(this.inputSize, 0);
         for (let i = 0; i < this.inputSize; i++) {
             for (let j = 0; j < this.outputSize; j++) {
                 nextErrors[i] += this.weights[i][j] * currentErrors[j];
@@ -82,7 +82,7 @@ class Dense {
         }
 
         // This is a bit wierd but has a 3x performance increase over storing gradients in a input*output matrix
-        const gradients = utils.filledArray(Math.max(this.inputSize, this.outputSize), () => ({}));
+        const gradients = utils.generatorFilledArray(Math.max(this.inputSize, this.outputSize), () => ({}));
         for (let i = 0; i < this.inputSize; i++) {
             gradients[i].input = input[i];
         }

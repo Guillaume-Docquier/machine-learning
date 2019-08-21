@@ -5,8 +5,8 @@ const intputSize = 700;
 const hiddenLayerSize = 300;
 const outputSize = 8;
 
-const randomData = utils.filledArray(intputSize, () => Math.random());
-const expectedOutput = utils.filledArray(outputSize, () => 0);
+const randomData = utils.generatorFilledArray(intputSize, Math.random);
+const expectedOutput = utils.valueFilledArray(outputSize, 0);
 const expectedClass = 2;
 expectedOutput[expectedClass] = 1;
 

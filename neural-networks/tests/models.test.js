@@ -18,7 +18,7 @@ describe("Models", function() {
             const hiddenLayerSize = 300;
             const outputSize = 8;
 
-            const randomData = utils.filledArray(intputSize, () => Math.random());
+            const randomData = utils.generatorFilledArray(intputSize, Math.random);
 
             const model = Sequential({
                     optimizer: SGD({ learningRate: 0.23 })

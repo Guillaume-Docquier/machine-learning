@@ -38,3 +38,8 @@ You have to save all the inputs and errors, and when you update the weights, ave
 
 Momentum
 https://www.youtube.com/watch?v=k8fTYJPd3_I - There's a nice slide at 6:28 which shows the equations
+
+DQN - Great series on implementing DQN (in python)
+https://www.youtube.com/watch?v=t3fbETsIBCY&list=PLQVvvaa0QuDezJFIOU5wDdfy4e9vdnx-7&index=6&t=2s
+https://www.youtube.com/watch?v=qfovbG84EBg&list=PLQVvvaa0QuDezJFIOU5wDdfy4e9vdnx-7&index=6
+https://medium.com/@jonathan_hui/rl-dqn-deep-q-network-e207751f7ae4

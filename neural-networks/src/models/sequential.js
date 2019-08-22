@@ -26,6 +26,14 @@ class Sequential {
 
     // TODO Return losses
     train(data, nbEpochs) {
+        console.log("Starting training");
+        console.table([{
+            "Optimizer": this.optimizer.type,
+            "Number of epochs": nbEpochs,
+            "Batch size": this.optimizer.batchSize,
+            "Learning rate": this.optimizer.learningRate
+        }]);
+
         const startTime = new Date();
         for (let i = 0; i < nbEpochs; i++) {
             console.log(`\nEpoch ${i + 1} of ${nbEpochs}`);
@@ -35,7 +43,7 @@ class Sequential {
 
         const trainTime = (new Date() - startTime);
         const avgEpochTime = trainTime / nbEpochs;
-        console.log(`\nTraning done in ${trainTime / 1000}s. Avg epoch time: ${avgEpochTime.toFixed(3)}ms`);
+        console.log(`\nTraining done in ${trainTime / 1000}s. Avg epoch time: ${avgEpochTime.toFixed(3)}ms`);
     }
 
     feedForward(data) {
@@ -53,13 +61,13 @@ class Sequential {
         };
     }
 
-    backprop(expected, actual, layerInputs) {
+    backprop(expected, actual) {
         const outputErrors = this.loss.derivative(expected, actual);
 
         let nextErrors = outputErrors;
         let layerGradients = [];
         for (let i = this.layers.length - 1; i >= 0; i--) {
-            const { errors, gradients } = this.layers[i].backprop(nextErrors, layerInputs[i]);
+            const { errors, gradients } = this.layers[i].backprop(nextErrors);
             nextErrors = errors;
             layerGradients.push(gradients);
         }

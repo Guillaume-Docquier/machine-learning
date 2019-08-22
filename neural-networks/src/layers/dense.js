@@ -57,9 +57,11 @@ class Dense {
 
         // z = w.i
         const output = utils.valueFilledArray(this.outputSize, 0);
-        for(let i = 0; i < this.inputSize; i++) {
-            for(let j = 0; j < this.outputSize; j++) {
-                output[j] += this.weights[i][j] * biasedInput[i]
+        for (let i = 0; i < this.inputSize; i++) {
+            const weightI = this.weights[i];
+            const biasedInputI = biasedInput[i];
+            for (let j = 0; j < this.outputSize; j++) {
+                output[j] += weightI[j] * biasedInputI
             }
         }
         
@@ -70,23 +72,21 @@ class Dense {
         };
     }
 
-    backprop(previousErrors, input) {
+    backprop(previousErrors) {
         const derivatives = this.activation.transfer();
         const currentErrors = previousErrors.map((previousError, j) => previousError * derivatives[j]);
 
         const nextErrors = utils.valueFilledArray(this.inputSize, 0);
         for (let i = 0; i < this.inputSize; i++) {
+            const weightI = this.weights[i];
+            let nextErrorsI = nextErrors[i];
             for (let j = 0; j < this.outputSize; j++) {
-                nextErrors[i] += this.weights[i][j] * currentErrors[j];
+                nextErrorsI += weightI[j] * currentErrors[j];
             }
+            nextErrors[i] = nextErrorsI;
         }
 
-        // This is a bit wierd but has a 3x performance increase over storing gradients in a input*output matrix
-        const inputs = utils.valueFilledArray(this.inputSize, 0);
-        for (let i = 0; i < this.inputSize; i++) {
-            inputs[i] = input[i];
-        }
-        
+        // Returning just the errors has a 4x performance increase over storing gradients in a input*output matrix        
         const errors = utils.valueFilledArray(this.outputSize, 0);
         for (let j = 0; j < this.outputSize; j++) {
             errors[j] = currentErrors[j];
@@ -94,7 +94,7 @@ class Dense {
 
         return {
             errors: nextErrors,
-            gradients: [inputs, errors]
+            gradients: errors
         };
     }
 

@@ -9,14 +9,13 @@ const MNIST_NB_CLASSES = 10;
 
 const { training, test } = mnist.set(8000, 2000);
 
-const model = Sequential({ optimizer: SGD({ learningRate: 0.2, batchSize: 5 }) })
+const model = Sequential({ optimizer: SGD({ learningRate: 0.2, batchSize: 32 }) })
     .add(Dense(MNIST_NB_PIXELS,         HIDDEN_LAYER_NB_NEURONS, ReLU()))
     .add(Dense(HIDDEN_LAYER_NB_NEURONS, MNIST_NB_CLASSES,        Sigmoid()));
 
-console.log("Training...");
 model.train(training, 3);
 
-console.log("\n\nTesting...");
+console.log("\nTesting...");
 let correct = 0;
 for (let i = 0; i < test.length; i++) {
     const predicted = model.predict(test[i].input);

@@ -33,7 +33,6 @@ class SGD {
 
     step(data, model) {
         const startTime = new Date();
-
         for (let i = 0; i < data.length; i += this.batchSize) {
             const miniBatchLayerGradients = utils.generatorFilledArray(model.layers.length, (_, i) => ({
                 inputs: utils.generatorFilledArray(model.layers[i].inputSize, () => []),
@@ -41,9 +40,11 @@ class SGD {
             }));
 
             // Forward + backward for 1 batch
-            for (let j = 0; j < this.batchSize && j + i < data.length; j++) {
-                const { inputs, output } = model.feedForward(data[i + j].input);
-                const errors = model.backprop(data[i + j].output, output);
+            const batch = data.slice(i, i + this.batchSize);
+            for (let j = 0; j < batch.length; j++) {
+                const datum = batch[j];
+                const { inputs, output } = model.feedForward(datum.input);
+                const errors = model.backprop(datum.output, output);
 
                 for (let k = 0; k < miniBatchLayerGradients.length; k++) {
                     const miniBatchLayerGradientsK = miniBatchLayerGradients[k];

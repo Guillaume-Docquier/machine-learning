@@ -9,8 +9,8 @@ const HIDDEN_LAYER_NB_NEURONS = 300;
 const MNIST_NB_CLASSES = 10;
 
 describe("MNIST training", function() {
-    it("Should achieve over 85% success rate within 20 seconds of training with a batch size of 1 and 1 epoch", function() {
-        this.timeout(20000);
+    it("Should achieve over 85% success rate within 15 seconds of training with a batch size of 1 and 1 epoch", function() {
+        this.timeout(15000);
 
         const { training, test } = mnist.set(8000, 2000);
 

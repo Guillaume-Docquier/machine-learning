@@ -72,11 +72,11 @@ class Sequential {
             layerGradients.push(gradients);
         }
 
-        return layerGradients;
+        return layerGradients.reverse();
     }
 
-    update(layerGradients) {
-        this.layers.forEach((layer, i) => layer.updateWeights(this.optimizer.learningRate, layerGradients[i]));
+    update(learningRate, layerGradients) {
+        this.layers.forEach((layer, i) => layer.updateWeights(learningRate, layerGradients[i]));
     }
 
     save(filePath) {

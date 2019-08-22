@@ -35,3 +35,6 @@ What do you do with the errors ? How do you backprop once?
 The answer is that the batch gradient descent doesn save any backpropagation, it simply saves you weight updates.
 During a mini batch, you backprop for each example, store it away and update the weights once after the bacth.
 You have to save all the inputs and errors, and when you update the weights, average the gradient.
+
+Momentum
+https://www.youtube.com/watch?v=k8fTYJPd3_I - There's a nice slide at 6:28 which shows the equations

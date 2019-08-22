@@ -100,15 +100,15 @@ class Dense {
 
     updateWeights(learningRate, gradients) {
         // wij = wij - lr * gradij
-        const { inputs, errors, batchSize } = gradients;
+        const { inputs, errors } = gradients;
         for (let i = 0; i < this.inputSize; i++) {
             const weightsI = this.weights[i];
             const inputsInBatch = inputs[i];
             for (let j = 0; j < this.outputSize; j++) {
                 let weightIJ = weightsI[j];
                 const errorsInBatch = errors[j];
-                for (let k = 0; k < batchSize; k++) {
-                    weightIJ += learningRate * inputsInBatch[k] * errorsInBatch[k] / batchSize;
+                for (let k = 0; k < inputsInBatch.length; k++) {
+                    weightIJ += learningRate * inputsInBatch[k] * errorsInBatch[k];
                 }
                 weightsI[j] = weightIJ;
             }

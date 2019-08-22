@@ -33,30 +33,29 @@ class SGD {
 
     step(data, model) {
         const startTime = new Date();
+
         for (let i = 0; i < data.length; i += this.batchSize) {
             const miniBatchLayerGradients = utils.generatorFilledArray(model.layers.length, (_, i) => ({
                 inputs: utils.generatorFilledArray(model.layers[i].inputSize, () => []),
-                errors: utils.generatorFilledArray(model.layers[i].outputSize, () => []),
-                batchSize: this.batchSize
+                errors: utils.generatorFilledArray(model.layers[i].outputSize, () => [])
             }));
 
             // Forward + backward for 1 batch
             for (let j = 0; j < this.batchSize && j + i < data.length; j++) {
                 const { inputs, output } = model.feedForward(data[i + j].input);
-                const gradients = model.backprop(data[i + j].output, output);
+                const errors = model.backprop(data[i + j].output, output);
 
-                gradients.reverse();
-                for (let k = 0; k < gradients.length; k++) {
+                for (let k = 0; k < miniBatchLayerGradients.length; k++) {
                     const miniBatchLayerGradientsK = miniBatchLayerGradients[k];
     
                     const input = inputs[k];
-                    for (let l = 0; l < input.length; l++) {
+                    for (let l = 0; l < miniBatchLayerGradientsK.inputs.length; l++) {
                         miniBatchLayerGradientsK.inputs[l].push(input[l]);
                     }
                     
-                    const gradErrors = gradients[k];
-                    for (let l = 0; l < gradErrors.length; l++) {
-                        miniBatchLayerGradientsK.errors[l].push(gradErrors[l]);
+                    const error = errors[k];
+                    for (let l = 0; l < miniBatchLayerGradientsK.errors.length; l++) {
+                        miniBatchLayerGradientsK.errors[l].push(error[l]);
                     }
                 }
 
@@ -65,7 +64,7 @@ class SGD {
             }
 
             // Update with gradients
-            model.update(miniBatchLayerGradients);
+            model.update(this.learningRate / this.batchSize, miniBatchLayerGradients);
         }
     }
 }

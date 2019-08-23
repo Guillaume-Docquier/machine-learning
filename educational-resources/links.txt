@@ -2,6 +2,9 @@ OpenAI
 https://openai.com/blog/spinning-up-in-deep-rl/
 https://spinningup.openai.com/en/latest/
 
+OenAI Gym Windows + JS
+https://xaviergeerinck.com/running-openai-gym-on-windows-and-js
+
 Keras
 https://keras.io/models/model/
 

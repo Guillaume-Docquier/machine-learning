@@ -4,7 +4,7 @@
   "description": "Machine learning exloration",
   "main": "index.js",
   "scripts": {
-    "test": "mocha neural-networks/tests/**/*.js --recursive"
+    "test": "mocha **/tests/*.test.js --recursive"
   },
   "repository": {
     "type": "git",

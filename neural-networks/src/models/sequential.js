@@ -1,4 +1,4 @@
-const utils = require("../utils.js");
+const utils = require("../utils");
 const { Deserializer } = require("../deserializer.js")
 const { Serializer } = require("../serializer.js")
 const { MSE } = require("../losses");

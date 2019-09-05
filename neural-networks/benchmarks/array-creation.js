@@ -1,4 +1,4 @@
-const utils = require("../src/utils.js");
+const utils = require("../src/utils");
 
 const methodNames = {
     new: "new",

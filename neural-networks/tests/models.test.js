@@ -1,6 +1,6 @@
 const assert = require("assert");
 const fs = require("fs");
-const utils = require("../src/utils.js");
+const utils = require("../src/utils");
 const { Sequential, Dense, ReLU, Sigmoid, SGD } = require("../src");
 
 const SAVE_FILE_NAME = "save.test.ai";

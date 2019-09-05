@@ -4,6 +4,8 @@ class DQN {
         this.epsilon = config.epsilon || 0.5;
         this.discount = config.discount || 0.95;
         this.model = config.model;
+        
+        this.memory = [];
     }
 
     step() {

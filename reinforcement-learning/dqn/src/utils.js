@@ -12,12 +12,21 @@ class Observation {
 class ReplayMemory {
     constructor(capacity) {
         this.capacity = capacity;
-        this.memory = [];
+        this.memory = new Array(capacity);
+
+        this.position = 0;
     }
 
-    sample() {
-        // TODO Need to copy memory beforehand ?
+    push(observation) {
+        this.memory[this.position] = observation;
+        this.position = (this.position + 1) % this.capacity;
+    }
 
+    sample(count) {
+        // TODO Is it bad to do it in place ?
+        utils.shuffleInPlace(this.memory);
+
+        return this.memory.slice(0, count);
     }
 }
 

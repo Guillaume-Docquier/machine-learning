@@ -14,19 +14,17 @@ describe("Models", function() {
         });
 
         it("Should save to file and load from file", function() {
-            const intputSize = 700;
+            const inputSize = 700;
             const hiddenLayerSize = 300;
             const outputSize = 8;
 
-            const randomData = utils.generatorFilledArray(intputSize, Math.random);
+            const randomData = utils.generatorFilledArray(inputSize, Math.random);
 
-            const model = Sequential({
-                    optimizer: SGD({ learningRate: 0.23 })
-                })
-                .add(Dense(intputSize,            hiddenLayerSize,       ReLU()))
+            const model = Sequential({ optimizer: SGD({ learningRate: 0.23 }) })
+                .add(Dense(inputSize,            hiddenLayerSize,       ReLU()))
                 .add(Dense(hiddenLayerSize,       hiddenLayerSize - 100, Sigmoid()))
                 .add(Dense(hiddenLayerSize - 100, hiddenLayerSize - 200, ReLU()))
-                .add(Dense(hiddenLayerSize - 200, outputSize,            Sigmoid()))
+                .add(Dense(hiddenLayerSize - 200, outputSize,            Sigmoid()));
 
             const expectedOutput = model.feedForward(randomData);
             model.save(SAVE_FILE_NAME);
@@ -38,6 +36,34 @@ describe("Models", function() {
             const actualOutput = reloadedModel.feedForward(randomData);
 
             assert.deepStrictEqual(actualOutput, expectedOutput, "Reloaded model did not output the same thing for the same input");
+        });
+
+        it("Should clone itself", function() {
+            const inputSize = 5;
+            const hiddenLayerSize = 300;
+            const outputSize = 5;
+
+            const randomData = utils.generatorFilledArray(inputSize, Math.random);
+
+            const model = Sequential({ optimizer: SGD({ learningRate: 0.23 }) })
+                .add(Dense(inputSize,            hiddenLayerSize,       ReLU()))
+                .add(Dense(hiddenLayerSize,       hiddenLayerSize - 100, Sigmoid()))
+                .add(Dense(hiddenLayerSize - 100, hiddenLayerSize - 200, ReLU()))
+                .add(Dense(hiddenLayerSize - 200, outputSize,            Sigmoid()));
+
+            const clonedModel = model.clone();
+
+            const originalOutput = model.feedForward(randomData);
+            const cloneOutput = clonedModel.feedForward(randomData);
+            assert.deepStrictEqual(cloneOutput.output, originalOutput.output, "Cloned model did not output the same thing for the same input");
+
+            const trainingData = utils.generatorFilledArray(150, () => ({ input: [1, 2, 3, 4, 5], output: [1, 2, 3, 4, 5] }));
+            clonedModel.train(trainingData, 1);
+
+            const originalOutputAfterTrain = model.feedForward(randomData);
+            const cloneOutputAfterTrain = clonedModel.feedForward(randomData);
+            assert.deepStrictEqual(originalOutputAfterTrain.output, originalOutput.output, "Original model did not output the same thing for the same input after only the clone was trained");
+            assert.notDeepStrictEqual(cloneOutputAfterTrain.output, cloneOutput.output, "Cloned model output did not change after training for the same input");
         });
     });
 });

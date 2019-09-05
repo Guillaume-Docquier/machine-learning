@@ -16,8 +16,8 @@ const Serializer = function(object) {
     }
 
     return serialized;
-}
+};
 
 module.exports = {
     Serializer
-}
+};

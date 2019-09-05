@@ -1,18 +1,18 @@
 const { Sequential, Dense, ReLU, Sigmoid, SGD } = require("../src");
 const utils = require("../src/utils");
 
-const intputSize = 700;
+const inputSize = 700;
 const hiddenLayerSize = 300;
 const outputSize = 8;
 
-const randomData = utils.generatorFilledArray(intputSize, Math.random);
+const randomData = utils.generatorFilledArray(inputSize, Math.random);
 const expectedOutput = utils.valueFilledArray(outputSize, 0);
 const expectedClass = 2;
 expectedOutput[expectedClass] = 1;
 
 console.log("Build a simple model and feed it some data");
 const model = Sequential({ optimizer: SGD({ learningRate: 0.2 }) })
-    .add(Dense(intputSize,            hiddenLayerSize,       ReLU()))
+    .add(Dense(inputSize,            hiddenLayerSize,       ReLU()))
     .add(Dense(hiddenLayerSize,       hiddenLayerSize,       ReLU()))
     .add(Dense(hiddenLayerSize,       hiddenLayerSize - 100, ReLU()))
     .add(Dense(hiddenLayerSize - 100, hiddenLayerSize,       ReLU()))

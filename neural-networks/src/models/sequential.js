@@ -80,23 +80,45 @@ class Sequential {
     }
 
     save(filePath) {
-        const serialized = {
+        utils.writeFileSync(filePath, this.serialize());
+    }
+
+    serialize() {
+        return JSON.stringify({
             optimizer: Serializer(this.optimizer),
             loss: Serializer(this.loss),
             layers: this.layers.map(layer => Serializer(layer))
-        }
-
-        utils.writeFileSync(filePath, serialized);
+        });
     }
 
     load(filePath) {
-        const { optimizer, loss, layers } = utils.readFileSync(filePath);
+        const data = this.deserialize(utils.readFileSync(filePath));
 
-        this.optimizer = Deserializer(optimizer);
-        this.loss = Deserializer(loss);
-        this.layers = layers.map(layer => Deserializer(layer));
+        for (let property in data) {
+            this[property] = data[property];
+        }
 
         return this;
+    }
+
+    deserialize(data) {
+        const { optimizer, loss, layers } = JSON.parse(data);
+        return {
+            optimizer: Deserializer(optimizer),
+            loss: Deserializer(loss),
+            layers: layers.map(layer => Deserializer(layer))
+        };
+    }
+
+    clone() {
+        const data = this.deserialize(this.serialize());
+
+        const clone = new Sequential();
+        for (let property in data) {
+            clone[property] = data[property];
+        }
+
+        return clone;
     }
 };
 

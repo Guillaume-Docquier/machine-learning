@@ -1,37 +1,45 @@
 const utils = require("../../../utils");
 
-class Observation {
-    constructor(state, action, next_state, reward) {
+class Transition {
+    constructor(state, action, reward, nextState) {
         this.state = state;
         this.action = action;
-        this.next_state = next_state;
         this.reward = reward;
+        this.nextState = nextState;
     }
 }
 
 class ReplayMemory {
     constructor(capacity) {
         this.capacity = capacity;
-        this.memory = new Array(capacity);
+        this.buffer = [];
 
         this.position = 0;
     }
 
-    push(observation) {
-        this.memory[this.position] = observation;
+    push(transition) {
+        if (this.buffer.length < this.capacity) {
+            this.buffer.push(null);
+        }
+
+        this.buffer[this.position] = transition;
         this.position = (this.position + 1) % this.capacity;
     }
 
     sample(count) {
-        // TODO Is it bad to do it in place ?
-        utils.shuffleInPlace(this.memory);
+        const bufferCopy = this.buffer.slice();
+        utils.shuffleInPlace(bufferCopy);
 
-        return this.memory.slice(0, count);
+        return bufferCopy.slice(0, count);
+    }
+
+    get length() {
+        return this.buffer.length;
     }
 }
 
 module.exports = {
     ...utils,
-    Observation,
+    Transition,
     ReplayMemory
 }

@@ -1,4 +1,4 @@
-const { ReplayMemory, Transition } = require("./utils");
+const { ReplayMemory, Transition, ...utils } = require("./utils");
 
 // epsilon: Defines how much exploration to use. 1 is random actions all the time
 class DQN {
@@ -7,13 +7,15 @@ class DQN {
         this.policyNetwork = model.clone();
 
         // TODO Validate default hyperparams
-        this.learningRate = config.learningRate || 0.1;
-        this.epsilon = config.epsilon || 0.5;
+        this.epsilonStart = config.epsilonStart || 1;
+        this.epsilonDecayRate = config.epsilonDecayRate || 0.95;
+        this.epsilonEnd = config.epsilonEnd || 0.01;
         this.discount = config.discount || 0.95;
         this.replayMemoryCapacity = config.replayMemoryCapacity || 25 * 1000;
         this.targetUpdate = config.targetUpdate || 5;
         this.batchSize = config.batchSize || 32;
         
+        this.epsilon = this.epsilonStart;
         this.memory = new ReplayMemory(this.replayMemoryCapacity);
     }
 
@@ -27,7 +29,7 @@ class DQN {
                 const { observation, reward, done } = env.step(action);
 
                 isDone = done;
-                this.memory.push(new Transition(currentObservation, action, reward, observation));
+                this.memory.push(new Transition(currentObservation, action, reward, observation, done));
                 this.fit();
             }
 
@@ -40,8 +42,7 @@ class DQN {
     }
 
     getAction(observation, actionSpace) {
-        const explorationRoll = Math.random();
-        if (explorationRoll < this.epsilon) {
+        if (Math.random() <= this.epsilon) {
             return Math.round(Math.random() * (actionSpace - 1));
         }
 
@@ -54,9 +55,26 @@ class DQN {
         }
 
         const batch = this.memory.sample(this.batchSize);
-        // TODO Implement training
+        const trainData = utils.valueFilledArray(batch.length, 0);
+        for (let i = 0; i < batch.length; i++) {
+            const { state, action, reward, nextState, done } = batch[i];
+            const qs = this.policyNetwork.feedForward(state).output;
 
-        return null;
+            const targetReward = reward;
+            if (!done) {
+                targetReward += this.discount * Math.max(this.targetNetwork.feedForward(nextState).output);
+            }
+
+            qs[action] = targetReward
+
+            trainData[i] = { input: state, output: qs };
+        }
+
+        this.policyNetwork.train(trainData, 1);
+
+        if (this.epsilon > this.epsilonEnd) {
+            this.epsilon *= this.epsilonDecayRate;
+        }
     }
 }
 

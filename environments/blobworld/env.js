@@ -17,6 +17,10 @@ class BlobworldEnv {
         return { observation, reward, done };
     }
 
+    render() {
+        return null;
+    }
+
     close() {
         return null;
     }

@@ -1,11 +1,12 @@
 const utils = require("../../../utils");
 
 class Transition {
-    constructor(state, action, reward, nextState) {
+    constructor(state, action, reward, nextState, done) {
         this.state = state;
         this.action = action;
         this.reward = reward;
         this.nextState = nextState;
+        this.done = done;
     }
 }
 

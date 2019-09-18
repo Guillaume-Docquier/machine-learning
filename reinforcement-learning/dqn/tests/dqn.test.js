@@ -1,6 +1,6 @@
 const assert = require("assert");
 
-describe("Something", function() {
+describe("DQN", function() {
     it("Should work", function() {
         assert(true);
     })

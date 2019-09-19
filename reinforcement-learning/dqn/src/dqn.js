@@ -19,22 +19,30 @@ class DQN {
         this.memory = new ReplayMemory(this.replayMemoryCapacity);
     }
 
-    train(env, nbEpisodes) {
-        const maxActions = 2000;
-        for (let i = 0; i < nbEpisodes; i++) {
+    train(env, nbEpisodes, saveFileName = null) {
+        const maxActions = 200;
+        for (let i = 1; i <= nbEpisodes; i++) {
             let currentObservation = env.reset();
             let isDone = false;
+            let episodeReward = 0;
             for (let j = 0; j < maxActions && !isDone; j++) {
                 const action = this.getAction(currentObservation, env.actionSpace);
                 const { observation, reward, done } = env.step(action);
 
                 isDone = done;
+                episodeReward += reward;
                 this.memory.push(new Transition(currentObservation, action, reward, observation, done));
                 this.fit();
             }
 
+            console.log(`Reward: ${episodeReward}`);
             if (i % this.targetUpdate === 0) {
+
                 this.targetNetwork = this.policyNetwork.clone();
+                if (saveFileName) {
+                    this.targetNetwork.save(saveFileName);
+                    console.log("SAVED!");
+                }
             }
         }
 
@@ -60,9 +68,13 @@ class DQN {
             const { state, action, reward, nextState, done } = batch[i];
             const qs = this.policyNetwork.feedForward(state).output;
 
-            const targetReward = reward;
+            let targetReward = reward;
             if (!done) {
-                targetReward += this.discount * Math.max(this.targetNetwork.feedForward(nextState).output);
+                const futureQs = this.targetNetwork.feedForward(nextState).output;
+                //console.log(`Future Qs: ${futureQs}`);
+                const expectedBestFutureReward = this.discount * Math.max(...futureQs);
+                //console.log(`Expected best future reward: ${expectedBestFutureReward}`);
+                targetReward += expectedBestFutureReward;
             }
 
             qs[action] = targetReward
@@ -70,6 +82,7 @@ class DQN {
             trainData[i] = { input: state, output: qs };
         }
 
+        //console.log(trainData);
         this.policyNetwork.train(trainData, 1);
 
         if (this.epsilon > this.epsilonEnd) {

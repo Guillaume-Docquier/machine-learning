@@ -29,6 +29,7 @@ class SGD {
         this.type = OPTIMIZER_TYPE;
         this.learningRate = config.learningRate || 0.01;
         this.batchSize = config.batchSize || 32;
+        this.verbose = config.verbose || false;
     }
 
     step(data, model) {
@@ -60,8 +61,10 @@ class SGD {
                     }
                 }
 
-                const avgIterationTime = (new Date() - startTime) / (i + j + 1);
-                utils.progress(`Iteration ${i + j + 1} of ${data.length}. Avg time per iteration: ${avgIterationTime.toFixed(3)}ms`);
+                if (this.verbose) {
+                    const avgIterationTime = (new Date() - startTime) / (i + j + 1);
+                    utils.progress(`Iteration ${i + j + 1} of ${data.length}. Avg time per iteration: ${avgIterationTime.toFixed(3)}ms`);
+                }
             }
 
             // Update with gradients

@@ -10,6 +10,7 @@ class Sequential {
         this.output = null;
         this.optimizer = config.optimizer || SGD();
         this.loss = config.loss || MSE();
+        this.verbose = config.verbose || false;
     }
 
     add(layer) {
@@ -26,24 +27,32 @@ class Sequential {
 
     // TODO Return losses
     train(data, nbEpochs) {
-        console.log("Starting training");
-        console.table([{
-            "Optimizer": this.optimizer.type,
-            "Number of epochs": nbEpochs,
-            "Batch size": this.optimizer.batchSize,
-            "Learning rate": this.optimizer.learningRate
-        }]);
+        if (this.verbose) {
+            console.log("Starting training");
+            console.table([{
+                "Optimizer": this.optimizer.type,
+                "Number of epochs": nbEpochs,
+                "Batch size": this.optimizer.batchSize,
+                "Learning rate": this.optimizer.learningRate
+            }]);
+        }
 
         const startTime = new Date();
         for (let i = 0; i < nbEpochs; i++) {
-            console.log(`\nEpoch ${i + 1} of ${nbEpochs}`);
+            
+            if (this.verbose) {
+                console.log(`\nEpoch ${i + 1} of ${nbEpochs}`);
+            }
             utils.shuffleInPlace(data);
             this.optimizer.step(data, this);
         }
 
         const trainTime = (new Date() - startTime);
         const avgEpochTime = trainTime / nbEpochs;
-        console.log(`\nTraining done in ${trainTime / 1000}s. Avg epoch time: ${avgEpochTime.toFixed(3)}ms`);
+        
+        if (this.verbose) {
+            console.log(`\nTraining done in ${trainTime / 1000}s. Avg epoch time: ${avgEpochTime.toFixed(3)}ms`);
+        }
     }
 
     feedForward(data) {

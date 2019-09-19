@@ -26,9 +26,10 @@ class BlobworldEnv {
     constructor(worldSize) {
         this.maxX = worldSize - 1;
         this.maxY = worldSize - 1;
-        this.actionSpace = Object.keys(actionEffects).length;
-
         this.reset();
+
+        this.stateSpace = this.getObservation().length;
+        this.actionSpace = Object.keys(actionEffects).length;
     }
 
     reset() {
@@ -44,13 +45,13 @@ class BlobworldEnv {
     }
 
     _newRandomPos() {
-        let x = Math.round(Math.random() * this.maxX);
-        let y = Math.round(Math.random() * this.maxY);
+        let x = Math.ceil(Math.random() * this.maxX + 1);
+        let y = Math.ceil(Math.random() * this.maxY + 1);
 
         const objects = [this.player, this.food, this.enemy];
         while (objects.some(object => object.x === x && object.y === y)) {
-            x = Math.round(Math.random() * this.maxX);
-            y = Math.round(Math.random() * this.maxY);
+            x = Math.ceil(Math.random() * this.maxX + 1);
+            y = Math.ceil(Math.random() * this.maxY + 1);
         }
 
         return { x, y }
@@ -58,14 +59,12 @@ class BlobworldEnv {
 
     getObservation() {
         return [
-            this.maxX,
-            this.maxY,
-            this.player.x,
-            this.player.y,
-            this.food.x,
-            this.food.y,
-            this.enemy.x,
-            this.enemy.y,
+            this.player.x / this.maxX,
+            this.player.y / this.maxY,
+            this.food.x / this.maxX,
+            this.food.y / this.maxY,
+            this.enemy.x / this.maxX,
+            this.enemy.y / this.maxY,
         ];
     }
 
@@ -105,16 +104,30 @@ class BlobworldEnv {
     }
 
     render() {
-        for (let i = 0; i < this.maxX; i++) {
-            let row = "";
-            for (let j = 0; j < this.maxY; j++) {
+        let horizontalBoundary = "----";
+        for (let i = 0; i <= this.maxX; i++) {
+            horizontalBoundary += "-";
+        }
+
+        console.log(`Player: ${JSON.stringify(this.player)}`);
+        console.log(`Food: ${JSON.stringify(this.food)}`);
+        console.log(`Enemy: ${JSON.stringify(this.enemy)}`);
+        console.log(horizontalBoundary);
+        for (let i = 0; i <= this.maxX; i++) {
+            let row = "| ";
+            for (let j = 0; j <= this.maxY; j++) {
                 row += this._getCharAt(i, j);
             }
-            console.log(row);
+            console.log(row + " |");
         }
+        console.log(horizontalBoundary);
     }
 
     _getCharAt(x, y) {
+        if (this.player.x === x && this.player.y === y) {
+            return "P";
+        }
+
         if (this.food.x === x && this.food.y === y) {
             return "F";
         }
@@ -122,12 +135,8 @@ class BlobworldEnv {
         if (this.enemy.x === x && this.enemy.y === y) {
             return "E";
         }
-        
-        if (this.player.x === x && this.player.y === y) {
-            return "P";
-        }
 
-        return " ";
+        return ".";
     }
 
     close() {

@@ -2,9 +2,12 @@ const { BlobworldEnv } = require("../../../environments");
 const { Sequential, Dense, ReLU, Sigmoid, MSE, SGD } = require("../../../neural-networks/src");
 const { DQN } = require("../src");
 
-const INPUT_SIZE = 700;
-const HIDDEN_LAYER_SIZE = 300;
-const OUTPUT_SIZE = 10;
+const saveFileName = "blobworld-dqn.ai";
+const env = BlobworldEnv(10);
+
+const INPUT_SIZE = env.stateSpace;
+const HIDDEN_LAYER_SIZE = 200;
+const OUTPUT_SIZE = env.actionSpace;
 
 const model = Sequential({ optimizer: SGD({ learningRate: 0.2, batchSize: 32 }) })
     .add(Dense(INPUT_SIZE,        HIDDEN_LAYER_SIZE, ReLU()))
@@ -12,4 +15,4 @@ const model = Sequential({ optimizer: SGD({ learningRate: 0.2, batchSize: 32 }) 
 
 const dqn = DQN(model);
 
-dqn.train(BlobworldEnv);
+dqn.train(env, 2000, saveFileName);

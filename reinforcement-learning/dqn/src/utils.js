@@ -20,7 +20,7 @@ class ReplayMemory {
 
     push(transition) {
         if (this.buffer.length < this.capacity) {
-            this.buffer.push(null);
+            this.buffer.push(0);
         }
 
         this.buffer[this.position] = transition;

@@ -7,25 +7,28 @@ class DQN {
         this.policyNetwork = model.clone();
 
         // TODO Validate default hyperparams
-        this.epsilonStart = config.epsilonStart || 1;
-        this.epsilonDecayRate = config.epsilonDecayRate || 0.95;
-        this.epsilonEnd = config.epsilonEnd || 0.01;
+        this.epsilonInitial = config.epsilonInitial || 1;
+        this.epsilonDecayRate = config.epsilonDecayRate || 0.999;
+        this.epsilonDecayStart = config.epsilonDecayStart || 300;
+        this.epsilonEnd = config.epsilonEnd || 0.1;
         this.discount = config.discount || 0.95;
         this.replayMemoryCapacity = config.replayMemoryCapacity || 25 * 1000;
         this.targetUpdate = config.targetUpdate || 5;
         this.batchSize = config.batchSize || 32;
         
-        this.epsilon = this.epsilonStart;
+        this.epsilon = this.epsilonInitial;
         this.memory = new ReplayMemory(this.replayMemoryCapacity);
     }
 
     train(env, nbEpisodes, saveFileName = null) {
         const maxActions = 200;
-        for (let i = 1; i <= nbEpisodes; i++) {
+        const rollingAverageLength = 50;
+        const rewards = new ReplayMemory(rollingAverageLength);
+        for (let episode = 1; episode <= nbEpisodes; episode++) {
             let currentObservation = env.reset();
             let isDone = false;
             let episodeReward = 0;
-            for (let j = 0; j < maxActions && !isDone; j++) {
+            for (let i = 0; i < maxActions && !isDone; i++) {
                 const action = this.getAction(currentObservation, env.actionSpace);
                 const { observation, reward, done } = env.step(action);
 
@@ -34,19 +37,27 @@ class DQN {
                 this.memory.push(new Transition(currentObservation, action, reward, observation, done));
                 this.fit();
             }
-
-            console.log(`Reward: ${episodeReward}`);
-            if (i % this.targetUpdate === 0) {
-
+            
+            this.updateEpsilon(episode);
+            if (episode % this.targetUpdate === 0) {
                 this.targetNetwork = this.policyNetwork.clone();
                 if (saveFileName) {
                     this.targetNetwork.save(saveFileName);
-                    console.log("SAVED!");
                 }
             }
+
+            rewards.push(episodeReward);
+            const avgReward = rewards.buffer.reduce((avg, reward) => avg + reward / Math.min(rollingAverageLength, episode), 0);
+            utils.progress(`Episode: ${episode} | Epsilon: ${this.epsilon.toFixed(5)} | Reward: ${episodeReward} | Avg Reward Of Last 50 runs: ${avgReward.toFixed(5)}`);
         }
 
         env.close()
+    }
+
+    updateEpsilon(episode) {
+        if (episode > this.epsilonDecayStart && this.epsilon > this.epsilonEnd) {
+            this.epsilon *= this.epsilonDecayRate;
+        }
     }
 
     getAction(observation, actionSpace) {
@@ -84,10 +95,6 @@ class DQN {
 
         //console.log(trainData);
         this.policyNetwork.train(trainData, 1);
-
-        if (this.epsilon > this.epsilonEnd) {
-            this.epsilon *= this.epsilonDecayRate;
-        }
     }
 }
 

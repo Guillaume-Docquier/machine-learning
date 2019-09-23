@@ -30,6 +30,8 @@ class BlobworldEnv {
 
         this.stateSpace = this.getObservation().length;
         this.actionSpace = Object.keys(actionEffects).length;
+
+        this.lastAction = null;
     }
 
     reset() {
@@ -45,13 +47,13 @@ class BlobworldEnv {
     }
 
     _newRandomPos() {
-        let x = Math.ceil(Math.random() * this.maxX + 1);
-        let y = Math.ceil(Math.random() * this.maxY + 1);
+        let x = Math.floor(Math.random() * this.maxX + 1);
+        let y = Math.floor(Math.random() * this.maxY + 1);
 
         const objects = [this.player, this.food, this.enemy];
         while (objects.some(object => object.x === x && object.y === y)) {
-            x = Math.ceil(Math.random() * this.maxX + 1);
-            y = Math.ceil(Math.random() * this.maxY + 1);
+            x = Math.floor(Math.random() * this.maxX + 1);
+            y = Math.floor(Math.random() * this.maxY + 1);
         }
 
         return { x, y }
@@ -69,6 +71,7 @@ class BlobworldEnv {
     }
 
     step(action) {
+        this.lastAction = action;
         this._applyAction(action);
 
         const observation = this.getObservation();
@@ -105,18 +108,19 @@ class BlobworldEnv {
 
     render() {
         let horizontalBoundary = "----";
-        for (let i = 0; i <= this.maxX; i++) {
+        for (let x = 0; x <= this.maxX; x++) {
             horizontalBoundary += "-";
         }
 
         console.log(`Player: ${JSON.stringify(this.player)}`);
         console.log(`Food: ${JSON.stringify(this.food)}`);
         console.log(`Enemy: ${JSON.stringify(this.enemy)}`);
+        console.log(`Action: ${Object.keys(actions)[this.lastAction]}`);
         console.log(horizontalBoundary);
-        for (let i = 0; i <= this.maxX; i++) {
+        for (let y = 0; y <= this.maxY; y++) {
             let row = "| ";
-            for (let j = 0; j <= this.maxY; j++) {
-                row += this._getCharAt(i, j);
+            for (let x = 0; x <= this.maxX; x++) {
+                row += this._getCharAt(x, y);
             }
             console.log(row + " |");
         }

@@ -8,7 +8,7 @@ class DQN {
 
         // TODO Validate default hyperparams
         this.epsilonInitial = config.epsilonInitial || 1;
-        this.epsilonDecayRate = config.epsilonDecayRate || 0.999;
+        this.epsilonDecayRate = config.epsilonDecayRate || 0.99999;
         this.epsilonDecayStart = config.epsilonDecayStart || 300;
         this.epsilonEnd = config.epsilonEnd || 0.1;
         this.discount = config.discount || 0.95;
@@ -21,7 +21,7 @@ class DQN {
     }
 
     train(env, nbEpisodes, saveFileName = null) {
-        const maxActions = 200;
+        const maxActions = 100;
         const rollingAverageLength = 50;
         const rewards = new ReplayMemory(rollingAverageLength);
         for (let episode = 1; episode <= nbEpisodes; episode++) {
@@ -48,6 +48,7 @@ class DQN {
 
             rewards.push(episodeReward);
             const avgReward = rewards.buffer.reduce((avg, reward) => avg + reward / Math.min(rollingAverageLength, episode), 0);
+            //console.log(`Episode: ${episode} | Epsilon: ${this.epsilon.toFixed(5)} | Reward: ${episodeReward} | Avg Reward Of Last 50 runs: ${avgReward.toFixed(5)}`);
             utils.progress(`Episode: ${episode} | Epsilon: ${this.epsilon.toFixed(5)} | Reward: ${episodeReward} | Avg Reward Of Last 50 runs: ${avgReward.toFixed(5)}`);
         }
 
@@ -93,7 +94,6 @@ class DQN {
             trainData[i] = { input: state, output: qs };
         }
 
-        //console.log(trainData);
         this.policyNetwork.train(trainData, 1);
     }
 }

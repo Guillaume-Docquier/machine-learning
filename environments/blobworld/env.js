@@ -75,16 +75,16 @@ class BlobworldEnv {
         this._applyAction(action);
 
         const observation = this.getObservation();
-        let reward = -1;
+        let reward = 0;
         let done = false
 
         if (this.hasWon()) {
-            reward = 200;
+            reward = 1;
             done = true
         }
 
         if (this.hasLost()) {
-            reward = -200;
+            reward = 0;
             done = true
         }
 
@@ -115,7 +115,7 @@ class BlobworldEnv {
         console.log(`Player: ${JSON.stringify(this.player)}`);
         console.log(`Food: ${JSON.stringify(this.food)}`);
         console.log(`Enemy: ${JSON.stringify(this.enemy)}`);
-        console.log(`Action: ${Object.keys(actions)[this.lastAction]}`);
+        console.log(`Action: ${Object.keys(actions)[this.lastAction]} (${this.lastAction})`);
         console.log(horizontalBoundary);
         for (let y = 0; y <= this.maxY; y++) {
             let row = "| ";

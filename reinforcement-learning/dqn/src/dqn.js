@@ -8,7 +8,7 @@ class DQN {
 
         // TODO Validate default hyperparams
         this.epsilonInitial = config.epsilonInitial || 1;
-        this.epsilonDecayRate = config.epsilonDecayRate || 0.99999;
+        this.epsilonDecayRate = config.epsilonDecayRate || 0.9999;
         this.epsilonDecayStart = config.epsilonDecayStart || 300;
         this.epsilonEnd = config.epsilonEnd || 0.1;
         this.discount = config.discount || 0.95;

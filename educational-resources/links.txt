@@ -13,6 +13,7 @@ https://machinelearningmastery.com/why-initialize-a-neural-network-with-random-w
 
 Activation functions
 https://en.wikipedia.org/wiki/Activation_function
+https://ml-cheatsheet.readthedocs.io/en/latest/activation_functions.html
 
 Implementing backpropagation
 https://machinelearningmastery.com/implement-backpropagation-algorithm-scratch-python/

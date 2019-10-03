@@ -1,14 +1,14 @@
-const ACTIVATION_TYPE = "ReLU";
+const ACTIVATION_TYPE = "Linear";
 
-const ReLUDeserializer = function(activationData) {
+const LinearDeserializer = function(activationData) {
     if (activationData.type !== ACTIVATION_TYPE) {
         return false;
     }
 
-    return new ReLU();
-};
+    return new Linear();
+}
 
-const ReLUSerializer = function(activation) {
+const LinearSerializer = function(activation) {
     if (activation.type !== ACTIVATION_TYPE) {
         return false;
     }
@@ -17,9 +17,9 @@ const ReLUSerializer = function(activation) {
     return {
         type
     };
-};
+}
 
-class ReLU {
+class Linear {
     constructor() {
         this.type = ACTIVATION_TYPE;
         this.input = null;
@@ -28,16 +28,16 @@ class ReLU {
     activate(input) {
         this.input = [...input];
 
-        return this.input.map(z => Math.max(0, z));
+        return this.input;
     }
 
     transfer() {
-        return this.input.map(z => z > 0 ? 1 : 0);
+        return this.input.map(_ => 1);
     }
 }
 
 module.exports = {
-    ReLU: () => new ReLU(),
-    ReLUDeserializer,
-    ReLUSerializer
+    Linear: () => new Linear(),
+    LinearDeserializer,
+    LinearSerializer
 }

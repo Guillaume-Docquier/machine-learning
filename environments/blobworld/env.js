@@ -22,6 +22,12 @@ const actionEffects = {
     [actions.DOWN_RIGHT]: { dx: 1, dy: 1 }
 }
 
+const rewards = {
+    STEP: -1,
+    WIN: 200,
+    LOSS: -200,
+}
+
 class BlobworldEnv {
     constructor(worldSize) {
         this.maxX = worldSize - 1;
@@ -75,16 +81,16 @@ class BlobworldEnv {
         this._applyAction(action);
 
         const observation = this.getObservation();
-        let reward = 0;
+        let reward = rewards.STEP;
         let done = false
 
         if (this.hasWon()) {
-            reward = 1;
+            reward = rewards.WIN;
             done = true
         }
 
         if (this.hasLost()) {
-            reward = 0;
+            reward = rewards.LOSS;
             done = true
         }
 
@@ -112,10 +118,10 @@ class BlobworldEnv {
             horizontalBoundary += "-";
         }
 
+        console.log(`Action: ${Object.keys(actions)[this.lastAction]} (${this.lastAction})`);
         console.log(`Player: ${JSON.stringify(this.player)}`);
         console.log(`Food: ${JSON.stringify(this.food)}`);
         console.log(`Enemy: ${JSON.stringify(this.enemy)}`);
-        console.log(`Action: ${Object.keys(actions)[this.lastAction]} (${this.lastAction})`);
         console.log(horizontalBoundary);
         for (let y = 0; y <= this.maxY; y++) {
             let row = "| ";

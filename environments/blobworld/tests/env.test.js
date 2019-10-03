@@ -4,6 +4,8 @@ const { BlobworldEnv, actions } = require("../env");
 const PLAYER_X = 2;
 const PLAYER_Y = 3;
 
+// TODO Fix tests, changed observation to not include boundaries and normalized output
+
 describe("Blobworld environment", function() {
     it("Should handle step right", function() {
         const worldSize = 10;

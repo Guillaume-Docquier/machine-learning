@@ -1,7 +1,7 @@
 const assert = require("assert");
 const { Serializer } = require("../src/serializer.js");
 const { Deserializer } = require("../src/deserializer.js");
-const { Dense, ReLU, Sigmoid, SGD, MSE } = require("../src");
+const { Dense, ReLU, Sigmoid, Linear, SGD, MSE } = require("../src");
 
 describe("Serialization", function() {
     describe("Layers", function() {
@@ -35,6 +35,16 @@ describe("Serialization", function() {
 
             const deserialized = Deserializer(serialized);
             assert.deepStrictEqual(sigmoid, deserialized, "Deserialized is not the same as the original");
+        });
+
+        it("Should work with Linear", function() {
+            const linear = Linear();
+
+            const serialized = Serializer(linear);
+            assert(serialized, "Serialized was null");
+
+            const deserialized = Deserializer(serialized);
+            assert.deepStrictEqual(linear, deserialized, "Deserialized is not the same as the original");
         });
     });
 

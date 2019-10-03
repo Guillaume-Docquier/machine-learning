@@ -26,7 +26,7 @@ class Sigmoid {
     }
 
     activate(input) {
-        this.output = input.map(value => 1 / (1 + Math.exp(-value)));
+        this.output = input.map(z => 1 / (1 + Math.exp(-z)));
 
         return this.output;
     }

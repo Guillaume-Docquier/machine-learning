@@ -1,6 +1,6 @@
 const { Sequential } = require("./models");
 const { Dense } = require("./layers");
-const { ReLU, Sigmoid } = require("./activations");
+const { ReLU, Sigmoid, Linear } = require("./activations");
 const { MSE } = require("./losses");
 const { SGD } = require("./optimizers");
 
@@ -9,6 +9,7 @@ module.exports = {
     Dense,
     ReLU,
     Sigmoid,
+    Linear,
     MSE,
     SGD
 }

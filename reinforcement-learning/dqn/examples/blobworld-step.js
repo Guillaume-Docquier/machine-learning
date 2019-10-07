@@ -4,8 +4,8 @@ const { Sequential } = require("../../../neural-networks/src");
 const saveFileName = "blobworld-dqn.ai";
 const env = BlobworldEnv(10);
 env.player = { x: 5, y: 5 };
-env.food = { x: env.player.x - 1, y: env.player.y - 1 };
-env.enemy = { x: env.player.x - 1, y: env.player.y + 1 };
+env.food = { x: 9, y: 9 };
+env.enemy = { x: 8, y: 9 };
 
 const model = Sequential().load(saveFileName);
 
@@ -13,6 +13,7 @@ let observation = env.getObservation();
 env.render();
 
 for (let i = 0; i < 5; i++) {
+    console.log(observation);
     const action = model.predict(observation);
     const qs = model.feedForward(observation).output;
     const state = env.step(action);

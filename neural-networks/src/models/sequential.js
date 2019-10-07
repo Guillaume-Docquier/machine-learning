@@ -39,18 +39,17 @@ class Sequential {
 
         const startTime = new Date();
         for (let i = 0; i < nbEpochs; i++) {
-            
             if (this.verbose) {
                 console.log(`\nEpoch ${i + 1} of ${nbEpochs}`);
             }
+
             utils.shuffleInPlace(data);
             this.optimizer.step(data, this);
         }
-
-        const trainTime = (new Date() - startTime);
-        const avgEpochTime = trainTime / nbEpochs;
         
         if (this.verbose) {
+            const trainTime = (new Date() - startTime);
+            const avgEpochTime = trainTime / nbEpochs;
             console.log(`\nTraining done in ${trainTime / 1000}s. Avg epoch time: ${avgEpochTime.toFixed(3)}ms`);
         }
     }

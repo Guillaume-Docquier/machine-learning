@@ -28,6 +28,8 @@ class ReLU {
     activate(input) {
         this.input = [...input];
 
+        //console.log(this.input);
+        //console.log(this.input.map(z => Math.max(0, z)));
         return this.input.map(z => Math.max(0, z));
     }
 

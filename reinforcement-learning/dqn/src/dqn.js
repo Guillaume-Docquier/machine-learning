@@ -8,16 +8,17 @@ class DQN {
 
         // TODO Validate default hyperparams
         this.epsilonInitial = config.epsilonInitial || 1;
-        this.epsilonDecayRate = config.epsilonDecayRate || 0.9999;
+        this.epsilonDecayTime = config.epsilonDecayTime || 0.9999;
         this.epsilonDecayStart = config.epsilonDecayStart || 300;
         this.epsilonEnd = config.epsilonEnd || 0.1;
         this.discount = config.discount || 0.95;
-        this.replayMemoryCapacity = config.replayMemoryCapacity || 25 * 1000;
-        this.targetUpdate = config.targetUpdate || 5;
-        this.batchSize = config.batchSize || 32;
+        this.replayMemorySize = config.replayMemorySize || 25 * 1000;
+        this.minimumReplayMemorySize = config.minimumReplayMemorySize || 1000;
+        this.updateEvery = config.updateEvery || 5;
+        this.batchSize = config.batchSize || 64;
         
         this.epsilon = this.epsilonInitial;
-        this.memory = new ReplayMemory(this.replayMemoryCapacity);
+        this.memory = new ReplayMemory(this.replayMemorySize);
     }
 
     train(env, nbEpisodes, saveFileName = null) {
@@ -39,7 +40,7 @@ class DQN {
             }
             
             this.updateEpsilon(episode);
-            if (episode % this.targetUpdate === 0) {
+            if (episode % this.updateEvery === 0) {
                 this.targetNetwork = this.policyNetwork.clone();
                 if (saveFileName) {
                     this.targetNetwork.save(saveFileName);
@@ -57,7 +58,7 @@ class DQN {
 
     updateEpsilon(episode) {
         if (episode > this.epsilonDecayStart && this.epsilon > this.epsilonEnd) {
-            this.epsilon *= this.epsilonDecayRate;
+            this.epsilon -= (this.epsilonInitial - this.epsilonEnd) / this.epsilonDecayTime;
         }
     }
 
@@ -70,7 +71,7 @@ class DQN {
     }
 
     fit() {
-        if (this.memory.length < this.batchSize) {
+        if (this.memory.length < this.minimumReplayMemorySize) {
             return;
         }
 

@@ -1,5 +1,5 @@
-const tf = require('@tensorflow/tfjs');
-require('@tensorflow/tfjs-node');
+const tf = require("@tensorflow/tfjs");
+require("@tensorflow/tfjs-node");
 
 const mnist = require("mnist");
 
@@ -11,33 +11,35 @@ const MNIST_NB_CLASSES = 10;
 const { training, test } = mnist.set(8000, 2000);
 
 const model = tf.sequential();
-model.add(tf.layers.dense({ inputShape: [MNIST_NB_PIXELS], units: HIDDEN_LAYER_NB_NEURONS, activation: 'relu' }));
-model.add(tf.layers.dense({ units: MNIST_NB_CLASSES, activation: 'softmax' }));
+model.add(tf.layers.dense({ inputShape: [MNIST_NB_PIXELS], units: HIDDEN_LAYER_NB_NEURONS, activation: "relu" }));
+model.add(tf.layers.dense({ units: MNIST_NB_CLASSES, activation: "softmax" }));
 model.compile({
-    optimizer: 'sgd',
-    loss: 'categoricalCrossentropy',
-    metrics: ['accuracy']
+    optimizer: "sgd",
+    loss: "categoricalCrossentropy",
+    metrics: ["accuracy"]
 });
 
 const trainInput = tf.tensor2d(training.map(data => data.input));
 const trainOutput = tf.tensor2d(training.map(data => data.output));
 const testInput = tf.tensor2d(test.map(data => data.input));
-const testOutput = tf.argMax(tf.tensor2d(test.map(data => data.output)), 1);
+const testOutput = tf.tensor2d(test.map(data => data.output));
 
 main();
 async function main() {
-    const trainingOutput = await model.fit(trainInput, trainOutput, {
+    const fitResult = await model.fit(trainInput, trainOutput, {
         batchSize: 64,
-        epochs: 75,
-        shuffle: true
+        epochs: 10,
+        shuffle: true,
+        validationSplit: 0.15
     });
 
-    console.log("\nTesting...");
-    const predictionsTensor = model.predict(testInput);
-    const predictions = tf.argMax(predictionsTensor, 1);
-    const goodPredictions = tf.equal(predictions, testOutput);
-    const numberOfGoodPredictions = goodPredictions.sum().dataSync();
-    console.log(`Success rate: ${numberOfGoodPredictions} / ${test.length} (${numberOfGoodPredictions / test.length * 100}%)`);
+    const evalResult = model.evaluate(testInput, testOutput, {
+        batchSize: test.length
+    });
+    
+    const accuracyMetricIndex = fitResult.params.metrics.indexOf("acc");
+    const accuracy = await evalResult[accuracyMetricIndex].data();
+    console.log(`Test accuracy: ${(accuracy * 100).toFixed(2)}%`);
 
     model.save("file://./mnist.tfm");
 }

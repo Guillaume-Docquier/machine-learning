@@ -1,2 +1,5 @@
 Intro videos by coding train
 https://www.youtube.com/playlist?list=PLRqwX-V7Uu6YIeVA3dNxbR9PYj4wV31oQ
+
+MNIST example using tensorflow-js, by tensorflow-js
+https://github.com/tensorflow/tfjs-examples/blob/master/mnist/index.js

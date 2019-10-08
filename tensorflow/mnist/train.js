@@ -12,8 +12,12 @@ const { training, test } = mnist.set(8000, 2000);
 
 const model = tf.sequential();
 model.add(tf.layers.dense({ inputShape: [MNIST_NB_PIXELS], units: HIDDEN_LAYER_NB_NEURONS, activation: 'relu' }));
-model.add(tf.layers.dense({ units: MNIST_NB_CLASSES, activation: 'sigmoid' }));
-model.compile({ optimizer: 'sgd', loss: 'meanSquaredError' });
+model.add(tf.layers.dense({ units: MNIST_NB_CLASSES, activation: 'softmax' }));
+model.compile({
+    optimizer: 'sgd',
+    loss: 'categoricalCrossentropy',
+    metrics: ['accuracy']
+});
 
 const trainInput = tf.tensor2d(training.map(data => data.input));
 const trainOutput = tf.tensor2d(training.map(data => data.output));
@@ -23,7 +27,7 @@ const testOutput = tf.argMax(tf.tensor2d(test.map(data => data.output)), 1);
 main();
 async function main() {
     const trainingOutput = await model.fit(trainInput, trainOutput, {
-        batchSize: 32,
+        batchSize: 64,
         epochs: 75,
         shuffle: true
     });

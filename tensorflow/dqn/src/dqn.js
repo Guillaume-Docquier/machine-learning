@@ -73,12 +73,7 @@ class DQN {
     }
 
     getQs(observation) {
-        const observationTensor = tf.tensor2d([observation]);
-        const qsTensor = this.policyNetwork.predict(observationTensor, { batchSize: 1 });
-
-        observationTensor.dispose();
-
-        return qsTensor;
+        return tf.tidy(() => this.policyNetwork.predict(tf.tensor2d([observation]), { batchSize: 1 }));
     }
 
     getAction(observation) {
@@ -86,12 +81,7 @@ class DQN {
             return Math.round(Math.random() * (this.env.actionSpace - 1));
         }
 
-        const actionTensor = this.getQs(observation).argMax();
-        const action = actionTensor.dataSync()[0];
-
-        actionTensor.dispose();
-
-        return action;
+        return tf.tidy(() => this.getQs(observation).argMax().dataSync()[0]);
     }
 
     async fit() {
@@ -102,31 +92,23 @@ class DQN {
         const batch = this.memory.sample(this.batchSize);
         const trainInput = utils.valueFilledArray(batch.length, 0);
         const trainOutput = utils.valueFilledArray(batch.length, 0);
-        for (let i = 0; i < batch.length; i++) {
-            const { state, action, reward, nextState, done } = batch[i];
-            const qsTensor = this.getQs(state);
-            const qs = qsTensor.dataSync();
+        tf.tidy(() => {
+            for (let i = 0; i < batch.length; i++) {
+                const { state, action, reward, nextState, done } = batch[i];
+                const qs = this.getQs(state).dataSync();
 
-            qsTensor.dispose();
+                let targetReward = reward;
+                if (!done) {
+                    const bestFutureQ = this.getQs(nextState).max().dataSync()[0];
+                    targetReward += this.discount * bestFutureQ;
+                }
 
-            let targetReward = reward;
-            if (!done) {
-                const bestFutureQTensor = this.getQs(nextState).max();
-                const bestFutureQ = bestFutureQTensor.dataSync()[0];
+                qs[action] = targetReward
 
-                bestFutureQTensor.dispose();
-
-                //console.log(`Future Qs: ${futureQs}`);
-                const expectedBestFutureReward = this.discount * bestFutureQ;
-                //console.log(`Expected best future reward: ${expectedBestFutureReward}`);
-                targetReward += expectedBestFutureReward;
+                trainInput[i] = state;
+                trainOutput[i] = qs;
             }
-
-            qs[action] = targetReward
-
-            trainInput[i] = state;
-            trainOutput[i] = qs;
-        }
+        });
 
         const trainInputTensor = tf.tensor2d(trainInput);
         const trainOutputTensor = tf.tensor2d(trainOutput);

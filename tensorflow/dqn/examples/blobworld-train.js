@@ -20,9 +20,9 @@ DQN(policyNetwork, targetNetwork, env, {
     batchSize: 64,
     updateEvery: 10,
     epsilonEnd: 0.05,
-    epsilonInitial: 0.5,
-    epsilonDecayStart: 0
-}).train(5000, saveFilePath);
+    epsilonInitial: 1,
+    epsilonDecayStart: 500
+}).train(2000, saveFilePath);
 
 function createNetwork() {
     const network = tf.sequential();

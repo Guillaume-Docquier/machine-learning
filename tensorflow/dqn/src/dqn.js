@@ -59,7 +59,7 @@ class DQN {
 
             rewards.push(episodeReward);
             const avgReward = rewards.buffer.reduce((avg, reward) => avg + reward / Math.min(rollingAverageLength, episode), 0);
-            //console.log(`Episode: ${episode} | Epsilon: ${this.epsilon.toFixed(5)} | Reward: ${episodeReward} | Avg Reward Of Last 50 runs: ${avgReward.toFixed(5)}`);
+            //console.log(`NbTensors: ${tf.memory().numTensors} | Episode: ${episode} | Epsilon: ${this.epsilon.toFixed(5)} | Reward: ${episodeReward} | Avg Reward Of Last 50 runs: ${avgReward.toFixed(5)}`);
             utils.progress(`NbTensors: ${tf.memory().numTensors} | Episode: ${episode} | Epsilon: ${this.epsilon.toFixed(5)} | Reward: ${episodeReward} | Avg Reward Of Last 50 runs: ${avgReward.toFixed(5)}`);
         }
 
@@ -72,8 +72,8 @@ class DQN {
         }
     }
 
-    getQs(observation) {
-        return tf.tidy(() => this.policyNetwork.predict(tf.tensor2d([observation]), { batchSize: 1 }));
+    getQs(observations) {
+        return tf.tidy(() => this.policyNetwork.predict(tf.tensor2d(observations), { batchSize: observations.length }));
     }
 
     getAction(observation) {
@@ -81,7 +81,7 @@ class DQN {
             return Math.round(Math.random() * (this.env.actionSpace - 1));
         }
 
-        return tf.tidy(() => this.getQs(observation).argMax().dataSync()[0]);
+        return tf.tidy(() => this.getQs([observation]).argMax().arraySync()[0]);
     }
 
     async fit() {
@@ -93,13 +93,19 @@ class DQN {
         const trainInput = utils.valueFilledArray(batch.length, 0);
         const trainOutput = utils.valueFilledArray(batch.length, 0);
         tf.tidy(() => {
+            const states = batch.map(observation => observation.state);
+            const batchQs = this.getQs(states).arraySync();
+
+            const nextStates = batch.map(observation => observation.nextState);
+            const batchBestFutureQs = this.getQs(nextStates).max(1).arraySync();
+
             for (let i = 0; i < batch.length; i++) {
-                const { state, action, reward, nextState, done } = batch[i];
-                const qs = this.getQs(state).dataSync();
+                const { state, action, reward, done } = batch[i];
+                const qs = batchQs[i];
 
                 let targetReward = reward;
                 if (!done) {
-                    const bestFutureQ = this.getQs(nextState).max().dataSync()[0];
+                    const bestFutureQ = batchBestFutureQs[i];
                     targetReward += this.discount * bestFutureQ;
                 }
 
